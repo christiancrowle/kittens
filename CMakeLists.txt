@@ -34,6 +34,8 @@ add_library(libKittens
     libKittens/mixer.h
     libKittens/chain.cpp
     libKittens/chain.h
+        libKittens/parameter.cpp
+        libKittens/Parameter.h
 
     libKittens/synth-wavsample.cpp
     libKittens/synth-wavsample.h
@@ -61,16 +63,17 @@ add_executable(kittens-imgui
     kittens-imgui/chaiscript_glue.h
 
     kittens-imgui/logging.cpp
-    kittens-imgui/logging.h)
+    kittens-imgui/logging.h kittens-imgui/util.cpp kittens-imgui/util.h)
 
 include_directories(extern/)
 
 include_directories(libKittens/)
 
 target_link_libraries(kittens-imgui libqio
-   libq
-   ${PORTMIDI_LIBRARY}
-   ${PORTAUDIO_LIBRARY}
-   ImGui
-   ${SDL2_LIBRARIES}
-   libKittens)
+        libq
+        ${PORTMIDI_LIBRARY}
+        ${PORTAUDIO_LIBRARY}
+        ImGui
+        ${SDL2_LIBRARIES}
+        libKittens
+        dl)

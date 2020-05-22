@@ -6,14 +6,7 @@
 #define SETTINGS_H
 
 namespace Kittens {
-    class KittenSettings {
-    private:
-        std::map<std::string, Parameter> settings;
-    public:
-        Parameter operator[](std::string key);
-    };
-
-    static KittenSettings GlobalSettings;
+    extern std::map<std::string, Kittens::Core::Parameter> GlobalSettings;
 }
 
 #endif //SETTINGS_H

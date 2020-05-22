@@ -15,6 +15,9 @@
 #include "chaiscript_glue.h"
 #include "settings.h"
 #include "logging.h"
+#include "util.h"
+
+
 
 int main() {
     Kittens::Logging::initialize_logging("logfile.log");
@@ -23,12 +26,15 @@ int main() {
 
     LOG(INFO) << "kittens " << info.KITTENS_VERSION << " starting\n";
 
-    Kittens::ChaiScript::initialize_config("main.cha", &Kittens::GlobalSettings);
+    Kittens::ChaiScript::initialize_config("main.cha");
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
     SDL_Window* window = SDL_CreateWindow(info.WINDOW_TITLE.c_str(),
-            SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_RESIZABLE);
+            SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+            std::get<int>(Kittens::GlobalSettings["window_width"].get_value()),
+            std::get<int>(Kittens::GlobalSettings["window_height"].get_value()),
+            SDL_WINDOW_RESIZABLE);
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 

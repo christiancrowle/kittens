@@ -10,16 +10,31 @@ namespace Kittens::Core {
 ///
     class Parameter {
     private:
-        std::variant<std::string, int, float, bool, double> value;
+        std::string value_s;
+        int value_i;
+        float value_f;
+        bool value_b;
+        double value_d;
+
+        std::string type;
+
         std::string name;
     public:
-        void set_name(std::string name);
+        Parameter* set_name(std::string name);
 
-        void set_value(std::variant<std::string, int, float, bool, double> newValue);
+        Parameter* set_value(std::string newValue);
+        Parameter* set_value(int newValue);
+        Parameter* set_value(float newValue);
+        Parameter* set_value(bool newValue);
+        Parameter* set_value(double newValue);
+
+        Parameter* set_type(std::string type);
 
         std::string get_name();
 
         std::variant<std::string, int, float, bool, double> get_value();
+
+        Parameter();
     };
 }
 #endif // PARAMETER_H
