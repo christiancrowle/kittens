@@ -1,6 +1,4 @@
 #include <iostream>
-#include <vector>
-#include <memory>
 
 #include "SDL.h"
 //#undef main
@@ -14,23 +12,24 @@
 //#include "duktape_glue.h"
 //#include "configfile.h"
 
-
-void initialize_logging(std::string logfile) {
-    auto sink_cout = std::make_shared<AixLog::SinkCout>(AixLog::Severity::trace, AixLog::Type::normal);
-    auto sink_file = std::make_shared<AixLog::SinkFile>(AixLog::Severity::trace, AixLog::Type::all, logfile);
-    AixLog::Log::init({sink_cout, sink_file});
-}
+#include "chaiscript_glue.h"
+#include "settings.h"
+#include "logging.h"
 
 int main() {
-    initialize_logging("logfile.log");
+    Kittens::Logging::initialize_logging("logfile.log");
 
-    KittensInfo info;
+    Kittens::Info info;
 
     LOG(INFO) << "kittens " << info.KITTENS_VERSION << " starting\n";
 
+    Kittens::ChaiScript::initialize_config("main.cha", &Kittens::GlobalSettings);
+
     SDL_Init(SDL_INIT_EVERYTHING);
 
-    SDL_Window* window = SDL_CreateWindow(info.WINDOW_TITLE.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_RESIZABLE);
+    SDL_Window* window = SDL_CreateWindow(info.WINDOW_TITLE.c_str(),
+            SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_RESIZABLE);
+
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     ImGui::CreateContext();

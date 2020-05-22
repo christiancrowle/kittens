@@ -28,9 +28,8 @@ include_directories(${SDL2_INCLUDE_DIRS})
 add_library(ImGui ${IMGUI_SOURCES} ${IMGUI_HEADERS})
 
 add_library(libKittens
-    libKittens/Kittens.cpp
-    libKittens/Processor.h
-    libKittens/Synth.h
+        libKittens/Processor.h
+        libKittens/SynthBase.h
     libKittens/mixer.cpp
     libKittens/mixer.h
     libKittens/chain.cpp
@@ -53,7 +52,16 @@ add_executable(kittens-imgui
     extern/duktape/duktape.h
     extern/duktape/duk_config.h
 
-    kittens-imgui/main.cpp)
+    kittens-imgui/main.cpp
+
+    kittens-imgui/settings.cpp
+    kittens-imgui/settings.h
+
+    kittens-imgui/chaiscript_glue.cpp
+    kittens-imgui/chaiscript_glue.h
+
+    kittens-imgui/logging.cpp
+    kittens-imgui/logging.h)
 
 include_directories(extern/)
 
