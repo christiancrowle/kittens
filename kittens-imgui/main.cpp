@@ -28,19 +28,27 @@ int main() {
 
     Kittens::ChaiScript::initialize_config("main.cha");
 
+    LOG(INFO) << "starting SDL\n";
+    LOG(INFO) << "\t(sdl_init)\n";
     SDL_Init(SDL_INIT_EVERYTHING);
 
+    LOG(INFO) << "\t(window)\n";
     SDL_Window* window = SDL_CreateWindow(info.WINDOW_TITLE.c_str(),
             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             std::get<int>(Kittens::GlobalSettings["window_width"].get_value()),
             std::get<int>(Kittens::GlobalSettings["window_height"].get_value()),
             SDL_WINDOW_RESIZABLE);
 
+    LOG(INFO) << "\t(renderer)\n";
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
+    LOG(INFO) << "\t(imgui-sdl)\n";
     ImGui::CreateContext();
-    ImGuiSDL::Initialize(renderer, 800, 600);
+    ImGuiSDL::Initialize(renderer,
+            std::get<int>(Kittens::GlobalSettings["window_width"].get_value()),
+            std::get<int>(Kittens::GlobalSettings["window_height"].get_value()));
 
+    LOG(INFO) << "\t(texture)\n";
     SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, 100, 100);
     {
         SDL_SetRenderTarget(renderer, texture);
@@ -48,6 +56,9 @@ int main() {
         SDL_RenderClear(renderer);
         SDL_SetRenderTarget(renderer, nullptr);
     }
+
+    LOG(INFO) << "done!\n";
+    LOG(INFO) << "kittens " << info.KITTENS_VERSION << " started!\n";
 
     bool run = true;
     while (run)
@@ -102,12 +113,19 @@ int main() {
         SDL_RenderPresent(renderer);
     }
 
+    LOG(INFO) << "kittens " << info.KITTENS_VERSION << " shutting down... \n";
     ImGuiSDL::Deinitialize();
 
+    LOG(INFO) << "shutting down sdl...\n";
+    LOG(INFO) << "\t(renderer)\n";
     SDL_DestroyRenderer(renderer);
+    LOG(INFO) << "\t(window)\n";
     SDL_DestroyWindow(window);
 
+    LOG(INFO) << "\t(imgui-sdl)\n";
     ImGui::DestroyContext();
+
+    LOG(INFO) << "done! have a lot of fun...\n";
 
     return 0;
 }
