@@ -11,7 +11,8 @@ set(IMGUI_SOURCES
 "extern/imgui/imgui_demo.cpp"
 "extern/imgui/imgui_draw.cpp"
 "extern/imgui/imgui_sdl.cpp"
-"extern/imgui/imgui_widgets.cpp")
+"extern/imgui/imgui_widgets.cpp"
+        "extern/imgui/imnodes.cpp")
 
 set(IMGUI_HEADERS
 "extern/imgui/imconfig.h"
@@ -20,7 +21,8 @@ set(IMGUI_HEADERS
 "extern/imgui/imstb_rectpack.h"
 "extern/imgui/imstb_textedit.h"
 "extern/imgui/imstb_truetype.h"
-"extern/imgui/imgui_sdl.h")
+"extern/imgui/imgui_sdl.h"
+        "extern/imgui/imnodes.h")
 
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
@@ -63,7 +65,7 @@ add_executable(kittens-imgui
     kittens-imgui/chaiscript_glue.h
 
     kittens-imgui/logging.cpp
-    kittens-imgui/logging.h kittens-imgui/util.cpp kittens-imgui/util.h)
+    kittens-imgui/logging.h kittens-imgui/util.cpp kittens-imgui/util.h kittens-imgui/imguichain.cpp kittens-imgui/imguichain.h)
 
 include_directories(extern/)
 

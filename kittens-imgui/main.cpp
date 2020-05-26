@@ -17,6 +17,10 @@
 #include "logging.h"
 #include "util.h"
 
+#include "synth-wavsample.h"
+
+#include "imgui/imnodes.h"
+#include "imguichain.h"
 
 
 int main() {
@@ -47,6 +51,7 @@ int main() {
     ImGuiSDL::Initialize(renderer,
             std::get<int>(Kittens::GlobalSettings["window_width"].get_value()),
             std::get<int>(Kittens::GlobalSettings["window_height"].get_value()));
+    imnodes::Initialize();
 
     LOG(INFO) << "\t(texture)\n";
     SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, 100, 100);
@@ -59,6 +64,10 @@ int main() {
 
     LOG(INFO) << "done!\n";
     LOG(INFO) << "kittens " << info.KITTENS_VERSION << " started!\n";
+
+    Kittens::Imgui::ImguiChain chain;
+    Kittens::Instrument::SynthWavSample sample = Kittens::Instrument::SynthWavSample("audio_files/Low E.wav");
+    chain.synth = &sample;
 
     bool run = true;
     while (run)
@@ -98,10 +107,18 @@ int main() {
 
         ImGui::NewFrame();
 
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
 
-        ImGui::Begin("Image");
-        ImGui::Image(texture, ImVec2(100, 100));
+        //ImGui::Begin("Image");
+        //ImGui::Image(texture, ImVec2(100, 100));
+        //ImGui::End();
+
+        ImGui::Begin("node editor");
+        imnodes::BeginNodeEditor();
+
+        chain.Render();
+
+        imnodes::EndNodeEditor();
         ImGui::End();
 
         SDL_SetRenderDrawColor(renderer, 114, 144, 154, 255);
