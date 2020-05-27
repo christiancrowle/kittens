@@ -14,8 +14,8 @@ namespace Kittens::Imgui {
 
 class ImguiChain : public Kittens::Core::Chain {
 private:
-    int MakeNodeFromProcessor(Kittens::Core::EffectsProcessor *processor);
-    int MakeNodeFromSynth(Kittens::Core::SynthBase *synth);
+    void MakeNodeFromProcessor(int id);
+    void MakeNodeFromSynth();
 
     short next_id = 0;
 public:

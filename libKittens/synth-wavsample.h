@@ -21,6 +21,8 @@ namespace Kittens::Instrument {
         size_t get_sps(); // returns the samples per second of the WAV
         int get_channels();
 
+        void restart();
+
         size_t get_length();
 
     private:

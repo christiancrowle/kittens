@@ -26,6 +26,10 @@ namespace Kittens::Instrument {
         return this->channels;
     }
 
+    void SynthWavSample::restart() {
+        this->wav.restart();
+    }
+
     size_t SynthWavSample::get_length() {
         return this->length * static_cast<size_t>(std::get<int>(this->params["loop_count"]));
     }

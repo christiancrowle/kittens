@@ -3,6 +3,7 @@
 //
 
 #include "imguichain.h"
+#include "chain.h"
 
 #include <cstdlib>
 #include <time.h>
@@ -46,25 +47,26 @@ namespace Kittens::Imgui {
         imnodes::EndNode();
     }
 
-    int ImguiChain::MakeNodeFromProcessor(Kittens::Core::EffectsProcessor* processor) {
-        int id = next_id++;
+    void ImguiChain::MakeNodeFromProcessor(int id) {
+        Core::EffectsProcessor* processor = this->get_processor(id);
+
         MakeNode(id, node_name(processor, id), &processor->params);
-        return id;
     }
 
-    int ImguiChain::MakeNodeFromSynth(Kittens::Core::SynthBase* synth) {
-        int id = next_id++;
+    void ImguiChain::MakeNodeFromSynth() {
+        int id = this->get_synth_id();
+        Core::SynthBase* synth = this->get_synth();
+
         MakeNode(id, node_name(synth, id), &synth->params);
-        return id;
     }
 
     void ImguiChain::Render() {
         next_id = 0;
 
-        this->MakeNodeFromSynth(this->synth);
+        this->MakeNodeFromSynth();
 
-        for (auto processor : this->processors) {
-            this->MakeNodeFromProcessor(processor);
+        for (auto [id, processor] : this->get_processor_collection()) {
+            this->MakeNodeFromProcessor(id);
         }
     }
 }

@@ -21,9 +21,12 @@
 
 #include "imgui/imnodes.h"
 #include "imguichain.h"
+#include "mixer.h"
 
+#define FRAMES_PER_SECOND 30
 
 int main() {
+
     Kittens::Logging::initialize_logging("logfile.log");
 
     Kittens::Info info;
@@ -44,7 +47,7 @@ int main() {
             SDL_WINDOW_RESIZABLE);
 
     LOG(INFO) << "\t(renderer)\n";
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, 1, SDL_RENDERER_ACCELERATED);
 
     LOG(INFO) << "\t(imgui-sdl)\n";
     ImGui::CreateContext();
@@ -67,9 +70,14 @@ int main() {
 
     Kittens::Imgui::ImguiChain chain;
     Kittens::Instrument::SynthWavSample sample = Kittens::Instrument::SynthWavSample("audio_files/Low E.wav");
-    chain.synth = &sample;
+    chain.set_synth(&sample);
 
+    Kittens::Core::Mixer mixer = Kittens::Core::Mixer(sample.get_sps(), sample.get_channels());
+    mixer.append_chain(chain);
+
+    mixer.start();
     bool run = true;
+    long frames = 0;
     while (run)
     {
         ImGuiIO& io = ImGui::GetIO();
@@ -106,6 +114,11 @@ int main() {
         io.MouseWheel = static_cast<float>(wheel);
 
         ImGui::NewFrame();
+        frames++;
+        if (frames == 120) {
+            frames = 0;
+            sample.restart();
+        }
 
         //ImGui::ShowDemoWindow();
 
@@ -129,6 +142,7 @@ int main() {
 
         SDL_RenderPresent(renderer);
     }
+    mixer.stop();
 
     LOG(INFO) << "kittens " << info.KITTENS_VERSION << " shutting down... \n";
     ImGuiSDL::Deinitialize();
