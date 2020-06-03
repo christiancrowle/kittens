@@ -24,6 +24,7 @@
 #include "mixer.h"
 
 #define FRAMES_PER_SECOND 30
+#define FPS_INTERVAL 1.0
 
 int main() {
 
@@ -47,7 +48,7 @@ int main() {
             SDL_WINDOW_RESIZABLE);
 
     LOG(INFO) << "\t(renderer)\n";
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, 1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, 1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     LOG(INFO) << "\t(imgui-sdl)\n";
     ImGui::CreateContext();
@@ -78,6 +79,9 @@ int main() {
     mixer.start();
     bool run = true;
     long frames = 0;
+    Uint32 fps_lasttime = SDL_GetTicks(); //the last recorded time.
+    Uint32 fps_current; //the current FPS.
+    Uint32 fps_frames = 0;
     while (run)
     {
         ImGuiIO& io = ImGui::GetIO();
@@ -115,10 +119,21 @@ int main() {
 
         ImGui::NewFrame();
         frames++;
-        if (frames == 120) {
+        if (frames == 60) {
             frames = 0;
             sample.restart();
         }
+
+        fps_frames++;
+        if (fps_lasttime < SDL_GetTicks() - FPS_INTERVAL*1000) {
+            fps_lasttime = SDL_GetTicks();
+            fps_current = fps_frames;
+            fps_frames = 0;
+        }
+
+        ImGui::Begin("Stats");
+        ImGui::Text("%u", fps_current);
+        ImGui::End();
 
         //ImGui::ShowDemoWindow();
 

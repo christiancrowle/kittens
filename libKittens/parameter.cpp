@@ -45,6 +45,24 @@ namespace Kittens::Core {
         return this->name;
     }
 
+    std::string Parameter::get_type() {
+        return this->type;
+    }
+
+    Parameter* Parameter::set_range(int minimum, int maximum) {
+        this->maximum = maximum;
+        this->minimum = minimum;
+        return this;
+    }
+
+    bool Parameter::is_output() {
+        return this->output;
+    }
+
+    std::pair<int, int> Parameter::get_range() {
+        return std::pair {this->minimum, this->maximum};
+    }
+
     std::variant<std::string, int, float, bool, double> Parameter::get_value() {
         int num_values = 0;
         std::variant<std::string, int, float, bool, double> out;

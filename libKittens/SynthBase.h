@@ -26,7 +26,7 @@ namespace Kittens::Core {
 
         virtual ~SynthBase() {}
 
-        std::map<std::string, std::variant<std::string, int, float, bool, double>> params;
+        std::map<std::string, Parameter> params;
     protected:
         std::string name;
     };

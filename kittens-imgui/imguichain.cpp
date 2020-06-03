@@ -30,7 +30,7 @@ namespace Kittens::Imgui {
         return out;
     }
 
-    void MakeNode(int id, std::string name, std::map<std::string, std::variant<std::string, int, float, bool, double>> *params) {
+    void MakeNode(int id, std::string name, std::map<std::string, Core::Parameter> *params) {
         imnodes::BeginNode(id);
 
         imnodes::BeginNodeTitleBar();
@@ -38,10 +38,44 @@ namespace Kittens::Imgui {
         imnodes::EndNodeTitleBar();
 
         int nextId = -1;
-        for (auto const& [name, value] : *params) {
-            imnodes::BeginInputAttribute(nextId++);
-            ImGui::Text(param_name(name, id).c_str());
-            imnodes::EndInputAttribute();
+        for (auto & [name, value] : *params) {
+            if (value.is_output()) {
+                imnodes::BeginOutputAttribute(nextId++);
+                ImGui::Text(param_name(name, id).c_str());
+
+                if (value.get_type() == "float") {
+                    ImGui::SliderFloat(param_name(name, id).c_str(), value.get_value_ref<float>(),
+                                       value.get_range().first, value.get_range().second);
+                } else if (value.get_type() == "int") {
+                    ImGui::SliderInt(param_name(name, id).c_str(), value.get_value_ref<int>(),
+                                     value.get_range().first, value.get_range().second);
+                } else if (value.get_type() == "string") {
+                    ImGui::InputText(param_name(name, id).c_str(), value.get_value_ref<std::string>()->data(),
+                                     value.get_range().second);
+                } else if (value.get_type() == "bool") {
+                    ImGui::Checkbox(param_name(name, id).c_str(), value.get_value_ref<bool>());
+                }
+
+                imnodes::EndOutputAttribute();
+            } else {
+                imnodes::BeginInputAttribute(nextId++);
+                ImGui::Text(param_name(name, id).c_str());
+
+                if (value.get_type() == "float") {
+                    ImGui::SliderFloat(param_name(name, id).c_str(), value.get_value_ref<float>(),
+                                       value.get_range().first, value.get_range().second);
+                } else if (value.get_type() == "int") {
+                    ImGui::SliderInt(param_name(name, id).c_str(), value.get_value_ref<int>(),
+                                     value.get_range().first, value.get_range().second);
+                } else if (value.get_type() == "string") {
+                    ImGui::InputText(param_name(name, id).c_str(), value.get_value_ref<std::string>()->data(),
+                                     value.get_range().second);
+                } else if (value.get_type() == "bool") {
+                    ImGui::Checkbox(param_name(name, id).c_str(), value.get_value_ref<bool>());
+                }
+
+                imnodes::EndInputAttribute();
+            }
         }
 
         imnodes::EndNode();

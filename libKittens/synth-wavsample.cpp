@@ -7,7 +7,9 @@ namespace Kittens::Instrument {
         this->channels = 2;
         this->length = wav.length();
 
-        this->params["loop_count"] = 2;
+        this->params["loop_count"].set_type("float");
+        this->params["loop_count"].set_value(1.0f);
+        this->params["loop_count"].set_range(0, 10);
     }
 
     float SynthWavSample::get_sample() {
@@ -31,6 +33,6 @@ namespace Kittens::Instrument {
     }
 
     size_t SynthWavSample::get_length() {
-        return this->length * static_cast<size_t>(std::get<int>(this->params["loop_count"]));
+        return this->length * static_cast<size_t>(std::get<int>(this->params["loop_count"].get_value()));
     }
 }

@@ -24,7 +24,7 @@ namespace Kittens::Core {
 
         virtual ~EffectsProcessor() = 0;
 
-        std::map<std::string, std::variant<std::string, int, float, bool, double>> params; // parameters for the processor.
+        std::map<std::string, Parameter> params; // parameters for the processor.
     protected:
         std::string name;
     };
