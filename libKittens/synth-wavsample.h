@@ -29,6 +29,7 @@ namespace Kittens::Instrument {
         q::wav_memory wav;
         size_t sps;
         size_t length;
+        size_t old_position = 0;
         int channels;
     };
 }

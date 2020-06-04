@@ -82,6 +82,7 @@ int main() {
     Uint32 fps_lasttime = SDL_GetTicks(); //the last recorded time.
     Uint32 fps_current; //the current FPS.
     Uint32 fps_frames = 0;
+    bool ctrl = false;
     while (run)
     {
         ImGuiIO& io = ImGui::GetIO();
@@ -103,6 +104,20 @@ int main() {
             else if (e.type == SDL_MOUSEWHEEL)
             {
                 wheel = e.wheel.y;
+            } else if (e.type == SDL_MOUSEMOTION) {
+                if (ctrl) {
+                    float x_clamped = -(static_cast<float>(e.motion.xrel) / *Kittens::GlobalSettings["window_width"].get_value_ref<int>());
+                    float y_clamped = -(static_cast<float>(e.motion.yrel) / *Kittens::GlobalSettings["window_height"].get_value_ref<int>());
+                    SDL_WarpMouseInWindow(window, *Kittens::GlobalSettings["window_width"].get_value_ref<int>() / 2,
+                                          *Kittens::GlobalSettings["window_height"].get_value_ref<int>() / 2);
+                    LOG(INFO) << x_clamped << " " << y_clamped << "\n";
+                }
+            } else if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.sym == SDLK_LCTRL)
+                    ctrl = true;
+            } else if (e.type == SDL_KEYUP) {
+                if (e.key.keysym.sym == SDLK_LCTRL)
+                    ctrl = false;
             }
         }
 
@@ -133,6 +148,7 @@ int main() {
 
         ImGui::Begin("Stats");
         ImGui::Text("%u", fps_current);
+        ImGui::Text("%d", ctrl);
         ImGui::End();
 
         //ImGui::ShowDemoWindow();

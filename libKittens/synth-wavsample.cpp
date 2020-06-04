@@ -10,9 +10,19 @@ namespace Kittens::Instrument {
         this->params["loop_count"].set_type("float");
         this->params["loop_count"].set_value(1.0f);
         this->params["loop_count"].set_range(0, 10);
+
+        this->params["position"].set_type("int");
+        this->params["position"].set_value(0);
+        this->params["position"].set_range(0, wav.length());
     }
 
     float SynthWavSample::get_sample() {
+        if (*this->params["position"].get_value_ref<int>() != this->old_position) {
+            this->wav.seek(*this->params["position"].get_value_ref<int>());
+        }
+
+        this->params["position"].set_value(static_cast<int>(this->wav.position()));
+        this->old_position = *this->params["position"].get_value_ref<int>();
         return this->wav()[0];
     }
 
@@ -30,6 +40,7 @@ namespace Kittens::Instrument {
 
     void SynthWavSample::restart() {
         this->wav.restart();
+        this->params["position"].set_value(0);
     }
 
     size_t SynthWavSample::get_length() {
