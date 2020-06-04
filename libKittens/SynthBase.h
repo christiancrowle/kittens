@@ -5,9 +5,9 @@
  *      Author: devbat
  */
 
-#include <vector>
 #include <map>
 #include <string>
+#include <vector>
 
 #include "Parameter.h"
 
@@ -18,17 +18,19 @@ namespace Kittens::Core {
 ///
 /// \brief The SynthBase interface. Base class for creating samples.
 ///
-    class SynthBase {
-    public:
-        virtual float get_sample() = 0;
+class SynthBase {
+   public:
+    virtual float get_sample() = 0;
 
-        virtual std::string get_name() = 0;
+    virtual std::string get_name() = 0;
 
-        virtual ~SynthBase() {}
+    void update_keys(std::array<bool, 512> keys);
 
-        std::map<std::string, Parameter> params;
-    protected:
-        std::string name;
-    };
-}
+    std::map<std::string, Parameter> params;
+
+   protected:
+    std::string name;
+    std::array<bool, 512> keys;
+};
+}  // namespace Kittens::Core
 #endif /* SYNTH_H_ */
