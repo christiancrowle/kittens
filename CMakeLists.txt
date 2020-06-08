@@ -40,10 +40,7 @@ add_library(libKittens
         libKittens/parameter.cpp
         libKittens/Parameter.h
 
-        libKittens/synth-wavsample.cpp
-        libKittens/synth-wavsample.h
-
-        libKittens/kittensinfo.h libKittens/SynthBase.cpp libKittens/Processor.cpp)
+        libKittens/kittensinfo.h libKittens/SynthBase.cpp libKittens/Processor.cpp libKittens/clock.cpp libKittens/clock.h)
 
 target_link_libraries(libKittens libqio
         libq
@@ -65,8 +62,11 @@ add_executable(kittens-imgui
         kittens-imgui/chaiscript_glue.cpp
         kittens-imgui/chaiscript_glue.h
 
+        kittens-imgui/synth-wavsample.cpp
+        kittens-imgui/synth-wavsample.h
+
         kittens-imgui/logging.cpp
-        kittens-imgui/logging.h kittens-imgui/util.cpp kittens-imgui/util.h kittens-imgui/imguichain.cpp kittens-imgui/imguichain.h)
+        kittens-imgui/logging.h kittens-imgui/util.cpp kittens-imgui/util.h kittens-imgui/imguichain.cpp kittens-imgui/imguichain.h kittens-imgui/globalstate.cpp kittens-imgui/globalstate.h)
 
 include_directories(extern/)
 

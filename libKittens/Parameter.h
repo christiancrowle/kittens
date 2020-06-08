@@ -16,6 +16,7 @@ class Parameter {
     bool value_b;
     double value_d;
 
+    bool is_using_range = false;
     int maximum = 1;
     int minimum = 0;
 
@@ -33,6 +34,10 @@ class Parameter {
     Parameter* set_value(float newValue);
     Parameter* set_value(bool newValue);
     Parameter* set_value(double newValue);
+
+    Parameter* increase_value(int amount);
+    Parameter* increase_value(float amount);
+    Parameter* increase_value(double amount);
 
     Parameter* set_type(std::string type);
 

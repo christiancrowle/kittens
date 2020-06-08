@@ -1,4 +1,8 @@
 #include "synth-wavsample.h"
+#include "globalstate.h"
+#include "settings.h"
+
+#include <algorithm>
 #include <string>
 
 namespace Kittens::Instrument {
@@ -18,16 +22,43 @@ SynthWavSample::SynthWavSample(std::string filename) : SynthBase(), wav(q::wav_m
     this->params["comment"].set_type("string");
     this->params["comment"].set_value("");
     this->params["comment"].set_range(0, 255);
+
+    this->params["volume"].set_type("float");
+    this->params["volume"].set_value(0.5f);
+    this->params["volume"].set_range(0, 1);
+}
+
+void SynthWavSample::play() {
+    this->queue_playing = true;
+}
+
+void SynthWavSample::stop() {
+    this->playing = false;
 }
 
 float SynthWavSample::get_sample() {
-    if (*this->params["position"].get_value_ref<int>() != this->old_position) {
-        this->wav.seek(*this->params["position"].get_value_ref<int>());
+    if (this->queue_playing) {
+        if (Kittens::Clock.ready()) {
+            this->playing = true;
+            this->queue_playing = false;
+        }
     }
 
-    this->params["position"].set_value(static_cast<int>(this->wav.position()));
-    this->old_position = *this->params["position"].get_value_ref<int>();
-    return this->wav()[0];
+    if (this->playing) {
+        if (this->params["position"].get_value<int>() != this->old_position) {
+            this->wav.seek(this->params["position"].get_value<int>());
+        }
+
+        if (Kittens::GlobalState::IsParameterControlMode) {
+            this->params["volume"].increase_value(Kittens::GlobalState::ParameterChangeY / 1000);
+        }
+
+        this->params["position"].set_value(static_cast<int>(this->wav.position()));
+        this->old_position = this->params["position"].get_value<int>();
+        return this->wav()[0];
+    } else {
+        return 0;  // do nothing if not playing.
+    }
 }
 
 std::string SynthWavSample::get_name() {

@@ -23,6 +23,8 @@
 #include "imguichain.h"
 #include "mixer.h"
 
+#include "globalstate.h"
+
 #define FRAMES_PER_SECOND 30
 #define FPS_INTERVAL 1.0
 
@@ -90,6 +92,9 @@ int main() {
 
         int wheel = 0;
 
+        Kittens::GlobalState::ParameterChangeX = 0;
+        Kittens::GlobalState::ParameterChangeY = 0;
+
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
             switch (e.type) {
@@ -106,18 +111,21 @@ int main() {
                     wheel = e.wheel.y;
                 }
                 case SDL_MOUSEMOTION: {
-                    if (ctrl) {
-                        float x_clamped_new = std::clamp((static_cast<float>(e.motion.xrel) / 10), -1.0f, 1.0f);
-                        float y_clamped_new = std::clamp((static_cast<float>(e.motion.yrel) / 10), -1.0f, 1.0f);
+                    if (Kittens::GlobalState::IsParameterControlMode) {
+                        float x_clamped_new = std::clamp((static_cast<float>(e.motion.xrel) / 100), -1.0f, 1.0f);
+                        float y_clamped_new = std::clamp((static_cast<float>(e.motion.yrel) / 100), -1.0f, 1.0f);
 
                         if (Kittens::GlobalSettings["sticky_xy"].get_value<bool>()) {
                             if (x_clamped_new != 0)
-                                x_clamped = x_clamped_new;
+                                Kittens::GlobalState::ParameterChangeX = x_clamped_new;
                             if (y_clamped_new != 0)
-                                y_clamped = y_clamped_new;
+                                Kittens::GlobalState::ParameterChangeY = y_clamped_new;
                         } else {
-                            x_clamped = x_clamped_new;
-                            y_clamped = y_clamped_new;
+                            if (x_clamped_new != Kittens::GlobalState::ParameterChangeX)
+                                Kittens::GlobalState::ParameterChangeX = x_clamped_new;
+
+                            if (y_clamped_new != Kittens::GlobalState::ParameterChangeX)
+                                Kittens::GlobalState::ParameterChangeY = y_clamped_new;
                         }
 
                         /*SDL_WarpMouseInWindow(window,
@@ -130,8 +138,11 @@ int main() {
                 case SDL_KEYDOWN:
                 case SDL_KEYUP: {
                     if (e.key.keysym.sym == SDLK_LCTRL) {
-                        ctrl = !ctrl;
-                        SDL_SetRelativeMouseMode(SDL_TRUE);
+                        Kittens::GlobalState::IsParameterControlMode = (e.type == SDL_KEYDOWN);
+                        if (Kittens::GlobalState::IsParameterControlMode)
+                            SDL_SetRelativeMouseMode(SDL_TRUE);
+                        else
+                            SDL_SetRelativeMouseMode(SDL_FALSE);
                     }
                     int key = e.key.keysym.scancode;
                     IM_ASSERT(key >= 0 && key < IM_ARRAYSIZE(io.KeysDown));
@@ -191,8 +202,8 @@ int main() {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             SDL_RenderFillRect(renderer, &rect);
 
-            rect.x = (rect.w / 2) + (x_clamped * (rect.w / 2)) - 10;
-            rect.y = (rect.h / 2) + (y_clamped * (rect.h / 2)) - 10;
+            rect.x = (rect.w / 2) + (Kittens::GlobalState::ParameterChangeX * (rect.w / 2)) - 10;
+            rect.y = (rect.h / 2) + (Kittens::GlobalState::ParameterChangeY * (rect.h / 2)) - 10;
             rect.w = 20;
             rect.h = 20;
 

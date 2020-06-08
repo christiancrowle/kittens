@@ -50,6 +50,6 @@ float Chain::get_sample() {
         s = processor->process_sample(s);
     }
 
-    return s * this->volume;
+    return s * this->synth.second->params["volume"].get_value<float>();
 }
 }  // namespace Kittens::Core
