@@ -5,6 +5,7 @@
 #include "clock.h"
 #include <chrono>
 #include "aixlog.hpp"
+#include "settings.h"
 
 #define CLK_PER_BEAT 24
 #define SEC_PER_MIN 60
@@ -12,16 +13,6 @@
 namespace Kittens::Core {
 void Clock::start() {
     this->clock_last_tick = std::chrono::high_resolution_clock::now();
-}
-
-void Clock::quantize(uint8_t amount) {
-    this->should_quantize = true;
-    this->quantize_amount = amount;
-}
-
-void Clock::unquantize() {
-    this->should_quantize = false;
-    this->quantize_amount = 0;
 }
 
 bool Clock::ready() {
@@ -33,8 +24,8 @@ bool Clock::ready() {
     if (is_clock_pulse)
         this->clock_pulses_since_last_ready++;
 
-    if (this->should_quantize) {
-        if (this->clock_pulses_since_last_ready == this->quantize_amount) {
+    if (Kittens::GlobalSettings["should_quantize"].get_value<bool>()) {
+        if (this->clock_pulses_since_last_ready == Kittens::GlobalSettings["quantize_amount"].get_value<bool>()) {
             this->clock_pulses_since_last_ready = 0;
             clock_last_tick = std::chrono::high_resolution_clock::now();
             return true;

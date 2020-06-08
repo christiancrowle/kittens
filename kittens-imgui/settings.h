@@ -8,7 +8,6 @@
 
 namespace Kittens {
 extern std::map<std::string, Kittens::Core::Parameter> GlobalSettings;
-extern Kittens::Core::Clock Clock;
 }  // namespace Kittens
 
 #endif  // SETTINGS_H

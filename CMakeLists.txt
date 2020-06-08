@@ -30,26 +30,18 @@ include_directories(${SDL2_INCLUDE_DIRS})
 
 add_library(ImGui ${IMGUI_SOURCES} ${IMGUI_HEADERS})
 
-add_library(libKittens
-        libKittens/Processor.h
-        libKittens/SynthBase.h
-        libKittens/mixer.cpp
-        libKittens/mixer.h
-        libKittens/chain.cpp
-        libKittens/chain.h
-        libKittens/parameter.cpp
-        libKittens/Parameter.h
-
-        libKittens/kittensinfo.h libKittens/SynthBase.cpp libKittens/Processor.cpp libKittens/clock.cpp libKittens/clock.h)
-
-target_link_libraries(libKittens libqio
-        libq
-        ${PORTMIDI_LIBRARY}
-        ${PORTAUDIO_LIBRARY}
-        ImGui
-        ${SDL2_LIBRARIES})
-
 add_executable(kittens-imgui
+        kittens-imgui/Processor.h
+        kittens-imgui/SynthBase.h
+        kittens-imgui/mixer.cpp
+        kittens-imgui/mixer.h
+        kittens-imgui/chain.cpp
+        kittens-imgui/chain.h
+        kittens-imgui/parameter.cpp
+        kittens-imgui/Parameter.h
+
+        kittens-imgui/kittensinfo.h kittens-imgui/SynthBase.cpp kittens-imgui/Processor.cpp kittens-imgui/clock.cpp kittens-imgui/clock.h
+
         extern/duktape/duktape.c
         extern/duktape/duktape.h
         extern/duktape/duk_config.h
@@ -66,7 +58,7 @@ add_executable(kittens-imgui
         kittens-imgui/synth-wavsample.h
 
         kittens-imgui/logging.cpp
-        kittens-imgui/logging.h kittens-imgui/util.cpp kittens-imgui/util.h kittens-imgui/imguichain.cpp kittens-imgui/imguichain.h kittens-imgui/globalstate.cpp kittens-imgui/globalstate.h)
+        kittens-imgui/logging.h kittens-imgui/util.cpp kittens-imgui/util.h kittens-imgui/imguichain.cpp kittens-imgui/imguichain.h kittens-imgui/globalstate.cpp kittens-imgui/globalstate.h kittens-imgui/Status.cpp kittens-imgui/Status.h)
 
 include_directories(extern/)
 
@@ -78,5 +70,4 @@ target_link_libraries(kittens-imgui libqio
         ${PORTAUDIO_LIBRARY}
         ImGui
         ${SDL2_LIBRARIES}
-        libKittens
         dl)

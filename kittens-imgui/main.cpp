@@ -23,6 +23,7 @@
 #include "imguichain.h"
 #include "mixer.h"
 
+#include "Status.h"
 #include "globalstate.h"
 
 #define FRAMES_PER_SECOND 30
@@ -218,6 +219,8 @@ int main() {
 
         imnodes::EndNodeEditor();
         ImGui::End();
+
+        Kittens::Imgui::Status::RenderStatusBar();
 
         SDL_SetRenderDrawColor(renderer, 114, 144, 154, 255);
         SDL_RenderClear(renderer);

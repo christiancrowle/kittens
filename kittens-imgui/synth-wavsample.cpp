@@ -1,4 +1,5 @@
 #include "synth-wavsample.h"
+#include "Status.h"
 #include "globalstate.h"
 #include "settings.h"
 
@@ -38,7 +39,7 @@ void SynthWavSample::stop() {
 
 float SynthWavSample::get_sample() {
     if (this->queue_playing) {
-        if (Kittens::Clock.ready()) {
+        if (Kittens::Status::clock.ready()) {
             this->playing = true;
             this->queue_playing = false;
         }

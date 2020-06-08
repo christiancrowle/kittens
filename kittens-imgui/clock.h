@@ -16,9 +16,6 @@ class Clock {
     void start();
     bool ready();
 
-    void quantize(uint8_t amount);
-    void unquantize();
-
    private:
     std::chrono::high_resolution_clock::time_point clock_last_tick;
     bool should_quantize = false;
