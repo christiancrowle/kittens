@@ -3,6 +3,7 @@
 //
 
 #include <chrono>
+#include <functional>
 #include <vector>
 
 #ifndef KITTENS_CLOCK_H
@@ -16,11 +17,17 @@ class Clock {
     void start();
     bool ready();
 
+    long long get_pulses_since_last_ready();
+
+    bool is_clock_pulse();
+
+    void tick();
+
+    std::vector<std::function<void()>> clock_queue;
+
    private:
     std::chrono::high_resolution_clock::time_point clock_last_tick;
-    bool should_quantize = false;
-    short clock_pulses_since_last_ready = 0;
-    uint8_t quantize_amount;
+    long long clock_pulses_since_last_ready;
 };
 }  // namespace Kittens::Core
 #endif  // KITTENS_CLOCK_H

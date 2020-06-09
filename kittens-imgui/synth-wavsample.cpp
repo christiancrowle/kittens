@@ -27,6 +27,9 @@ SynthWavSample::SynthWavSample(std::string filename) : SynthBase(), wav(q::wav_m
     this->params["volume"].set_type("float");
     this->params["volume"].set_value(0.5f);
     this->params["volume"].set_range(0, 1);
+
+    // oof ouch owie my lambdas
+    Kittens::Status::clock.clock_queue.emplace_back(std::bind(&SynthWavSample::play, this));
 }
 
 void SynthWavSample::play() {
@@ -38,7 +41,7 @@ void SynthWavSample::stop() {
 }
 
 float SynthWavSample::get_sample() {
-    if (this->queue_playing) {
+    if (this->queue_playing && !this->playing) {
         if (Kittens::Status::clock.ready()) {
             this->playing = true;
             this->queue_playing = false;
@@ -56,6 +59,12 @@ float SynthWavSample::get_sample() {
 
         this->params["position"].set_value(static_cast<int>(this->wav.position()));
         this->old_position = this->params["position"].get_value<int>();
+
+        if (this->wav.position() == this->wav.length()) {
+            this->restart();
+            this->playing = false;
+        }
+
         return this->wav()[0];
     } else {
         return 0;  // do nothing if not playing.

@@ -32,9 +32,7 @@
 int main() {
     Kittens::Logging::initialize_logging("logfile.log");
 
-    Kittens::Info info;
-
-    LOG(INFO) << "kittens " << info.KITTENS_VERSION << " starting\n";
+    LOG(INFO) << "kittens " << Kittens::Info::KITTENS_VERSION << " starting\n";
 
     Kittens::ChaiScript::initialize_config("main.cha");
 
@@ -44,7 +42,7 @@ int main() {
 
     LOG(INFO) << "\t(window)\n";
     SDL_Window* window =
-        SDL_CreateWindow(info.WINDOW_TITLE.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        SDL_CreateWindow(Kittens::Info::WINDOW_TITLE.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                          Kittens::GlobalSettings["window_width"].get_value<int>(),
                          Kittens::GlobalSettings["window_height"].get_value<int>(), SDL_WINDOW_RESIZABLE);
 
@@ -66,9 +64,12 @@ int main() {
         SDL_SetRenderTarget(renderer, nullptr);
     }
 
+    LOG(INFO) << "the clock too.\n";
+    Kittens::Status::clock.start();
+
     LOG(INFO) << "done!\n";
 
-    LOG(INFO) << "kittens " << info.KITTENS_VERSION << " started!\n";
+    LOG(INFO) << "kittens " << Kittens::Info::KITTENS_VERSION << " started!\n";
 
     Kittens::Imgui::ImguiChain chain;
     Kittens::Instrument::SynthWavSample sample = Kittens::Instrument::SynthWavSample("audio_files/Low E.wav");
@@ -78,6 +79,7 @@ int main() {
     mixer.append_chain(chain);
 
     mixer.start();
+
     bool run = true;
     long frames = 0;
     Uint32 fps_lasttime = SDL_GetTicks();  // the last recorded time.
@@ -170,10 +172,7 @@ int main() {
 
         ImGui::NewFrame();
         frames++;
-        if (frames == 60) {
-            frames = 0;
-            sample.restart();
-        }
+        Kittens::Status::clock.tick();
 
         fps_frames++;
         if (fps_lasttime < SDL_GetTicks() - FPS_INTERVAL * 1000) {
@@ -234,7 +233,7 @@ int main() {
     }
     mixer.stop();
 
-    LOG(INFO) << "kittens " << info.KITTENS_VERSION << " shutting down... \n";
+    LOG(INFO) << "kittens " << Kittens::Info::KITTENS_VERSION << " shutting down... \n";
     ImGuiSDL::Deinitialize();
 
     LOG(INFO) << "shutting down sdl...\n";
