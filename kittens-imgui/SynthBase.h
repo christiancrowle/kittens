@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include "DeviceBase.h"
 #include "Parameter.h"
 
 #ifndef SYNTH_H_
@@ -18,18 +19,17 @@ namespace Kittens::Core {
 ///
 /// \brief The SynthBase interface. Base class for creating samples.
 ///
-class SynthBase {
+class SynthBase : DeviceBase {
    public:
     virtual float get_sample() = 0;
 
-    virtual std::string get_name() = 0;
-
     void update_keys(std::array<bool, 512> keys);
 
-    std::map<std::string, Parameter> params;
+    using DeviceBase::get_name;
+    using DeviceBase::params;
+    using DeviceBase::queue;
 
    protected:
-    std::string name;
     std::array<bool, 512> keys;
 };
 }  // namespace Kittens::Core

@@ -79,6 +79,7 @@ int main() {
     mixer.append_chain(chain);
 
     mixer.start();
+    sample.queue();
 
     bool run = true;
     long frames = 0;

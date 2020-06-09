@@ -21,7 +21,8 @@ bool Clock::is_clock_pulse() {
 
     // LOG(INFO) << ((bpm * CLK_PER_BEAT) / SEC_PER_MIN) / 1000) << "\n";
     // LOG(INFO) << (static_cast<float>(1) / ((static_cast<float>((bpm * CLK_PER_BEAT) / SEC_PER_MIN) / 1000))) << "\n";
-    LOG(INFO) << ms.count() << "\n";
+    if (Kittens::GlobalSettings["verbose_logging"].get_value<bool>())
+        LOG(INFO) << ms.count() << "\n";
     // see http://archive.is/OdJZ4 for formula
     bool is_clock_pulse =
         (ms.count() >= (static_cast<float>(1) / ((static_cast<float>((bpm * CLK_PER_BEAT) / SEC_PER_MIN) / 1000))));

@@ -58,7 +58,7 @@ add_executable(kittens-imgui
         kittens-imgui/synth-wavsample.h
 
         kittens-imgui/logging.cpp
-        kittens-imgui/logging.h kittens-imgui/util.cpp kittens-imgui/util.h kittens-imgui/imguichain.cpp kittens-imgui/imguichain.h kittens-imgui/globalstate.cpp kittens-imgui/globalstate.h kittens-imgui/Status.cpp kittens-imgui/Status.h)
+        kittens-imgui/logging.h kittens-imgui/util.cpp kittens-imgui/util.h kittens-imgui/imguichain.cpp kittens-imgui/imguichain.h kittens-imgui/globalstate.cpp kittens-imgui/globalstate.h kittens-imgui/Status.cpp kittens-imgui/Status.h kittens-imgui/DeviceBase.cpp kittens-imgui/DeviceBase.h)
 
 include_directories(extern/)
 

@@ -27,7 +27,9 @@ SynthWavSample::SynthWavSample(std::string filename) : SynthBase(), wav(q::wav_m
     this->params["volume"].set_type("float");
     this->params["volume"].set_value(0.5f);
     this->params["volume"].set_range(0, 1);
+}
 
+void SynthWavSample::queue() {
     // oof ouch owie my lambdas
     Kittens::Status::clock.clock_queue.emplace_back(std::bind(&SynthWavSample::play, this));
 }

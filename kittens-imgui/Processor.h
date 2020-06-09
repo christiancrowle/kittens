@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+#include "DeviceBase.h"
 #include "Parameter.h"
 
 #ifndef PROCESSOR_H_
@@ -17,16 +18,16 @@ namespace Kittens::Core {
 ///
 /// \brief The EffectsProcessor interface. Base class to transform samples.
 ///
-class EffectsProcessor {
+class EffectsProcessor : DeviceBase {
    public:
     virtual float process_sample(float s) = 0;  // Take a sample and transform it
-    virtual std::string get_name() = 0;
 
     void update_keys(std::array<bool, 512> keys);
 
-    std::map<std::string, Parameter> params;  // parameters for the processor.
+    using DeviceBase::get_name;
+    using DeviceBase::params;
+
    protected:
-    std::string name;
     std::array<bool, 512> keys;
 };
 }  // namespace Kittens::Core

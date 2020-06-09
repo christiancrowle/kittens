@@ -28,6 +28,8 @@ class SynthWavSample : public Core::SynthBase {
 
     size_t get_length();
 
+    void queue();
+
    private:
     q::wav_memory wav;
     size_t sps;
