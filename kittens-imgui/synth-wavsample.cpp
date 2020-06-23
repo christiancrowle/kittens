@@ -50,13 +50,13 @@ float SynthWavSample::get_sample() {
         }
     }
 
+    if (Kittens::GlobalState::IsParameterControlMode) {
+        this->params["volume"].increase_value(Kittens::GlobalState::ParameterChangeY / 1000);
+    }
+
     if (this->playing) {
         if (this->params["position"].get_value<int>() != this->old_position) {
             this->wav.seek(this->params["position"].get_value<int>());
-        }
-
-        if (Kittens::GlobalState::IsParameterControlMode) {
-            this->params["volume"].increase_value(Kittens::GlobalState::ParameterChangeY / 1000);
         }
 
         this->params["position"].set_value(static_cast<int>(this->wav.position()));

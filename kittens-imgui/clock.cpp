@@ -51,11 +51,11 @@ bool Clock::ready() {
 
     if (is_clock_pulse) {
         if (Kittens::GlobalSettings["should_quantize"].get_value<bool>()) {
-            LOG(INFO) << Kittens::GlobalSettings["quantize_amount"].get_value<int>() << "\n";
+            // LOG(INFO) << Kittens::GlobalSettings["quantize_amount"].get_value<int>() << "\n";
             if (this->clock_pulses_since_last_ready == Kittens::GlobalSettings["quantize_amount"].get_value<int>()) {
                 this->clock_pulses_since_last_ready = 0;
                 clock_last_tick = std::chrono::high_resolution_clock::now();
-                LOG(INFO) << "clock pulse quantized\n";
+                // LOG(INFO) << "clock pulse quantized\n";
                 return true;
             }
         } else {

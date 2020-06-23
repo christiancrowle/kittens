@@ -18,6 +18,14 @@ int random_int() {
     return rand() % INT32_MAX + 1;
 }
 
+void ImguiChain::set_id(long id) {
+    this->chain_id = id;
+}
+
+long ImguiChain::get_id() {
+    return this->chain_id;
+}
+
 std::string node_name(std::variant<Kittens::Core::EffectsProcessor*, Kittens::Core::SynthBase*> n, int id) {
     if (std::holds_alternative<Kittens::Core::EffectsProcessor*>(n))
         return std::get<Kittens::Core::EffectsProcessor*>(n)->get_name() + " (" + std::to_string(id) + ")";
@@ -31,7 +39,7 @@ std::string param_name(std::string name, int id) {
     return out;
 }
 
-void MakeNode(int id, std::string name, std::map<std::string, Core::Parameter>* params) {
+void ImguiChain::MakeNode(int id, std::string name, std::map<std::string, Core::Parameter>* params) {
     imnodes::BeginNode(id);
 
     imnodes::BeginNodeTitleBar();
@@ -41,7 +49,7 @@ void MakeNode(int id, std::string name, std::map<std::string, Core::Parameter>* 
     int nextId = -1;
     for (auto& [name, value] : *params) {
         if (value.is_output()) {
-            imnodes::BeginOutputAttribute(nextId++);
+            imnodes::BeginOutputAttribute(this->chain_id + (nextId++));
             ImGui::Text(param_name(name, id).c_str());
 
             if (value.get_type() == "float") {
@@ -58,7 +66,7 @@ void MakeNode(int id, std::string name, std::map<std::string, Core::Parameter>* 
 
             imnodes::EndOutputAttribute();
         } else {
-            imnodes::BeginInputAttribute(nextId++);
+            imnodes::BeginInputAttribute(this->chain_id + (nextId++));
             ImGui::Text(param_name(name, id).c_str());
 
             if (value.get_type() == "float") {
@@ -88,7 +96,7 @@ void ImguiChain::MakeNodeFromProcessor(int id) {
 }
 
 void ImguiChain::MakeNodeFromSynth() {
-    int id = this->get_synth_id();
+    int id = this->chain_id + this->get_synth_id();
     Core::SynthBase* synth = this->get_synth();
 
     MakeNode(id, node_name(synth, id), &synth->params);

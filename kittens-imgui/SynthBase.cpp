@@ -7,6 +7,7 @@
 
 namespace Kittens::Core {
 void SynthBase::update_keys(std::array<bool, 512> keys) {
+    // this->keys = std::array<bool, 512>{};
     this->keys = keys;
 }
 }  // namespace Kittens::Core

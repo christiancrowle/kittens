@@ -30,7 +30,7 @@ class SynthBase : DeviceBase {
     using DeviceBase::queue;
 
    protected:
-    std::array<bool, 512> keys;
+    std::array<bool, 512> keys{};
 };
 }  // namespace Kittens::Core
 #endif /* SYNTH_H_ */

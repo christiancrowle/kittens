@@ -1,6 +1,6 @@
-#include <vector>
-#include <variant>
 #include <string>
+#include <variant>
+#include <vector>
 
 #include <q_io/audio_stream.hpp>
 
@@ -18,16 +18,21 @@ namespace Kittens::Core {
 ///
 /// \brief The Mixer struct. Takes an arbitrary number of Chains and mixes them (weighted according to Chain.volume)
 ///
-    struct Mixer : q::port_audio_stream {
-    public:
-        Mixer(size_t sps, int channels);
+struct Mixer : q::port_audio_stream {
+   public:
+    std::vector<SynthBase*> synths;
 
-        void process(out_channels const &out);
+    Mixer(size_t sps, int channels);
 
-        void append_chain(Chain c);
+    void process(out_channels const& out);
+    void Render();
 
-    private:
-        std::vector<Chain *> chains;
-    };
-}
-#endif // MIXER_H
+   private:
+    int next_id;
+    int next_synth_id;
+
+    void MakeNode(int id, std::string name, std::map<std::string, Core::Parameter>* params);
+    void MakeNodeFromSynth(Core::SynthBase* synth);
+};
+}  // namespace Kittens::Core
+#endif  // MIXER_H

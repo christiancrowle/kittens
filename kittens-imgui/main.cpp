@@ -71,15 +71,13 @@ int main() {
 
     LOG(INFO) << "kittens " << Kittens::Info::KITTENS_VERSION << " started!\n";
 
-    Kittens::Imgui::ImguiChain chain;
-    Kittens::Instrument::SynthWavSample sample = Kittens::Instrument::SynthWavSample("audio_files/Low E.wav");
-    chain.set_synth(&sample);
-
-    Kittens::Core::Mixer mixer = Kittens::Core::Mixer(sample.get_sps(), sample.get_channels());
-    mixer.append_chain(chain);
+    Kittens::Core::Mixer mixer = Kittens::Core::Mixer(44100, 2);
+    mixer.synths = {new Kittens::Instrument::SynthWavSample("audio_files/Low E.wav"),
+                    new Kittens::Instrument::SynthWavSample("audio_files/Low E-but lower.wav")};
 
     mixer.start();
-    sample.queue();
+    mixer.synths[0]->queue();
+    mixer.synths[1]->queue();
 
     bool run = true;
     long frames = 0;
@@ -159,6 +157,11 @@ int main() {
             }
         }
 
+        if (io.KeysDown[SDL_SCANCODE_H]) {
+            mixer.synths.push_back(new Kittens::Instrument::SynthWavSample("audio_files/Low E.wav"));
+            mixer.synths.back()->queue();
+        }
+
         int mouseX, mouseY;
         const int buttons = SDL_GetMouseState(&mouseX, &mouseY);
 
@@ -215,7 +218,7 @@ int main() {
         ImGui::Begin("node editor");
         imnodes::BeginNodeEditor();
 
-        chain.Render();
+        mixer.Render();
 
         imnodes::EndNodeEditor();
         ImGui::End();
