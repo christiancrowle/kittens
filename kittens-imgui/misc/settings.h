@@ -1,7 +1,7 @@
 #include <map>
 #include <string>
-#include "Parameter.h"
-#include "clock.h"
+#include "../core/Parameter.h"
+#include "../core/clock.h"
 
 #ifndef SETTINGS_H
 #define SETTINGS_H

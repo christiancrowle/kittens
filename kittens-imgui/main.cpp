@@ -7,24 +7,23 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_sdl.h"
 
-#include "kittensinfo.h"
+#include "misc/kittensinfo.h"
 
 //#include "duktape_glue.h"
 //#include "configfile.h"
 
-#include "chaiscript_glue.h"
-#include "logging.h"
-#include "settings.h"
-#include "util.h"
+#include "chaiscript/chaiscript_glue.h"
+#include "misc/logging.h"
+#include "misc/settings.h"
+#include "misc/util.h"
 
-#include "synth-wavsample.h"
+#include "instrument/synth-wavsample.h"
 
+#include "core/mixer.h"
 #include "imgui/imnodes.h"
-#include "imguichain.h"
-#include "mixer.h"
 
-#include "Status.h"
-#include "globalstate.h"
+#include "core/Status.h"
+#include "misc/globalstate.h"
 
 #define FRAMES_PER_SECOND 30
 #define FPS_INTERVAL 1.0

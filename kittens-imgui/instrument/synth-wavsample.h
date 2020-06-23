@@ -1,5 +1,5 @@
 #include <string>
-#include "SynthBase.h"
+#include "../core/SynthBase.h"
 
 #include <q_io/audio_file.hpp>
 

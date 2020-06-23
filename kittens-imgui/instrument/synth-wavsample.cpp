@@ -1,7 +1,7 @@
 #include "synth-wavsample.h"
-#include "Status.h"
-#include "globalstate.h"
-#include "settings.h"
+#include "../core/Status.h"
+#include "../misc/globalstate.h"
+#include "../misc/settings.h"
 
 #include <algorithm>
 #include <string>

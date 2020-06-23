@@ -31,16 +31,14 @@ include_directories(${SDL2_INCLUDE_DIRS})
 add_library(ImGui ${IMGUI_SOURCES} ${IMGUI_HEADERS})
 
 add_executable(kittens-imgui
-        kittens-imgui/Processor.h
-        kittens-imgui/SynthBase.h
-        kittens-imgui/mixer.cpp
-        kittens-imgui/mixer.h
-        kittens-imgui/chain.cpp
-        kittens-imgui/chain.h
-        kittens-imgui/parameter.cpp
-        kittens-imgui/Parameter.h
+        kittens-imgui/core/Processor.h
+        kittens-imgui/core/SynthBase.h
+        kittens-imgui/core/mixer.cpp
+        kittens-imgui/core/mixer.h
+        kittens-imgui/core/parameter.cpp
+        kittens-imgui/core/Parameter.h
 
-        kittens-imgui/kittensinfo.h kittens-imgui/SynthBase.cpp kittens-imgui/Processor.cpp kittens-imgui/clock.cpp kittens-imgui/clock.h
+        kittens-imgui/misc/kittensinfo.h kittens-imgui/core/SynthBase.cpp kittens-imgui/core/Processor.cpp kittens-imgui/core/clock.cpp kittens-imgui/core/clock.h
 
         extern/duktape/duktape.c
         extern/duktape/duktape.h
@@ -48,17 +46,17 @@ add_executable(kittens-imgui
 
         kittens-imgui/main.cpp
 
-        kittens-imgui/settings.cpp
-        kittens-imgui/settings.h
+        kittens-imgui/misc/settings.cpp
+        kittens-imgui/misc/settings.h
 
-        kittens-imgui/chaiscript_glue.cpp
-        kittens-imgui/chaiscript_glue.h
+        kittens-imgui/chaiscript/chaiscript_glue.cpp
+        kittens-imgui/chaiscript/chaiscript_glue.h
 
-        kittens-imgui/synth-wavsample.cpp
-        kittens-imgui/synth-wavsample.h
+        kittens-imgui/instrument/synth-wavsample.cpp
+        kittens-imgui/instrument/synth-wavsample.h
 
-        kittens-imgui/logging.cpp
-        kittens-imgui/logging.h kittens-imgui/util.cpp kittens-imgui/util.h kittens-imgui/imguichain.cpp kittens-imgui/imguichain.h kittens-imgui/globalstate.cpp kittens-imgui/globalstate.h kittens-imgui/Status.cpp kittens-imgui/Status.h kittens-imgui/DeviceBase.cpp kittens-imgui/DeviceBase.h)
+        kittens-imgui/misc/logging.cpp
+        kittens-imgui/misc/logging.h kittens-imgui/misc/util.cpp kittens-imgui/misc/util.h kittens-imgui/misc/globalstate.cpp kittens-imgui/misc/globalstate.h kittens-imgui/core/Status.cpp kittens-imgui/core/Status.h kittens-imgui/core/DeviceBase.cpp kittens-imgui/core/DeviceBase.h)
 
 include_directories(extern/)
 

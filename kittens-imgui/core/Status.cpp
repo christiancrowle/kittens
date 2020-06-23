@@ -3,9 +3,9 @@
 //
 
 #include "Status.h"
+#include "../misc/kittensinfo.h"
+#include "../misc/settings.h"
 #include "imgui/imgui.h"
-#include "kittensinfo.h"
-#include "settings.h"
 
 namespace Kittens::Status {
 Kittens::Core::Clock clock;

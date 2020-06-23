@@ -7,7 +7,6 @@
 #include "Parameter.h"
 #include "Processor.h"
 #include "SynthBase.h"
-#include "chain.h"
 
 namespace q = cycfi::q;
 

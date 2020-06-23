@@ -4,8 +4,8 @@
 
 #include "clock.h"
 #include <chrono>
+#include "../misc/settings.h"
 #include "aixlog.hpp"
-#include "settings.h"
 
 #define CLK_PER_BEAT 24
 #define SEC_PER_MIN 60
