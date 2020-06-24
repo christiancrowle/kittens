@@ -3,6 +3,7 @@
 #include "../misc/globalstate.h"
 #include "../misc/settings.h"
 
+#include <imgui/imgui.h>
 #include <algorithm>
 #include <string>
 
@@ -29,12 +30,21 @@ SynthWavSample::SynthWavSample(std::string filename) : SynthBase(), wav(q::wav_m
     this->params["volume"].set_range(0, 1);
 }
 
+SynthWavSample::SynthWavSample(std::string filename, SDL_Scancode key) : SynthWavSample(filename) {
+    this->set_key(key);
+}
+
 void SynthWavSample::queue() {
-    // oof ouch owie my lambdas
-    Kittens::Status::clock.clock_queue.emplace_back(std::bind(&SynthWavSample::play, this));
+    if (Kittens::GlobalSettings["clocked_mode"].get_value<bool>()) {
+        // oof ouch owie my lambdas
+        Kittens::Status::clock.clock_queue.emplace_back(std::bind(&SynthWavSample::play, this));
+    } else {
+        this->play();
+    }
 }
 
 void SynthWavSample::play() {
+    this->restart();
     this->queue_playing = true;
 }
 
@@ -43,33 +53,42 @@ void SynthWavSample::stop() {
 }
 
 float SynthWavSample::get_sample() {
-    if (this->queue_playing && !this->playing) {
-        if (Kittens::Status::clock.ready()) {
-            this->playing = true;
-            this->queue_playing = false;
-        }
-    }
+    if (this->get_enabled()) {
+        if (this->queue_playing) {
+            if (Kittens::Status::clock.ready()) {
+                this->playing = true;
+                this->queue_playing = false;
+            }
 
-    if (Kittens::GlobalState::IsParameterControlMode) {
-        this->params["volume"].increase_value(Kittens::GlobalState::ParameterChangeY / 1000);
-    }
-
-    if (this->playing) {
-        if (this->params["position"].get_value<int>() != this->old_position) {
-            this->wav.seek(this->params["position"].get_value<int>());
+            if (!Kittens::GlobalSettings["clocked_mode"].get_value<bool>()) {
+                this->playing = true;
+                this->queue_playing = false;
+            }
         }
 
-        this->params["position"].set_value(static_cast<int>(this->wav.position()));
-        this->old_position = this->params["position"].get_value<int>();
-
-        if (this->wav.position() == this->wav.length()) {
-            this->restart();
-            this->playing = false;
+        if (Kittens::GlobalState::IsParameterControlMode && ImGui::GetIO().KeysDown[this->key]) {
+            this->params["volume"].increase_value(Kittens::GlobalState::ParameterChangeY / 1000);
         }
 
-        return this->wav()[0];
+        if (this->playing) {
+            if (this->params["position"].get_value<int>() != this->old_position) {
+                this->wav.seek(this->params["position"].get_value<int>());
+            }
+
+            this->params["position"].set_value(static_cast<int>(this->wav.position()));
+            this->old_position = this->params["position"].get_value<int>();
+
+            if (this->wav.position() == this->wav.length()) {
+                this->restart();
+                this->playing = false;
+            }
+
+            return this->wav()[0];
+        } else {
+            return 0;  // do nothing if not playing.
+        }
     } else {
-        return 0;  // do nothing if not playing.
+        return 0;
     }
 }
 
@@ -93,4 +112,6 @@ void SynthWavSample::restart() {
 size_t SynthWavSample::get_length() {
     return this->length * static_cast<size_t>(this->params["loop_count"].get_value<int>());
 }
+
+void SynthWavSample::render() {}
 }  // namespace Kittens::Instrument

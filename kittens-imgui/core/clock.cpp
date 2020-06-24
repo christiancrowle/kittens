@@ -24,11 +24,15 @@ bool Clock::is_clock_pulse() {
     if (Kittens::GlobalSettings["verbose_logging"].get_value<bool>())
         LOG(INFO) << ms.count() << "\n";
     // see http://archive.is/OdJZ4 for formula
+
+    this->ms = ms.count();
+
     bool is_clock_pulse =
         (ms.count() >= (static_cast<float>(1) / ((static_cast<float>((bpm * CLK_PER_BEAT) / SEC_PER_MIN) / 1000))));
 
-    if (is_clock_pulse)
+    if (is_clock_pulse) {
         this->clock_pulses_since_last_ready++;
+    }
 
     return is_clock_pulse;
 }
@@ -38,6 +42,9 @@ void Clock::tick() {
         for (auto functor : clock_queue) {
             functor();
         }
+
+        if (!Kittens::GlobalSettings["looping"].get_value<bool>())
+            clock_queue.clear();
     }
 }
 
@@ -54,6 +61,7 @@ bool Clock::ready() {
             // LOG(INFO) << Kittens::GlobalSettings["quantize_amount"].get_value<int>() << "\n";
             if (this->clock_pulses_since_last_ready == Kittens::GlobalSettings["quantize_amount"].get_value<int>()) {
                 this->clock_pulses_since_last_ready = 0;
+                this->milliseconds_between_events = this->ms;
                 clock_last_tick = std::chrono::high_resolution_clock::now();
                 // LOG(INFO) << "clock pulse quantized\n";
                 return true;

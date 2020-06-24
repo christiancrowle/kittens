@@ -5,6 +5,7 @@
  *      Author: devbat
  */
 
+#include <SDL_scancode.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -23,14 +24,21 @@ class SynthBase : DeviceBase {
    public:
     virtual float get_sample() = 0;
 
-    void update_keys(std::array<bool, 512> keys);
+    SDL_Scancode get_key();
+    void set_key(SDL_Scancode key);
+
+    void set_enabled(bool enabled);
+    bool get_enabled();
+
+    virtual void render() = 0;  // for custom rendering code (such as with chaiscriptconsole)
 
     using DeviceBase::get_name;
     using DeviceBase::params;
     using DeviceBase::queue;
 
    protected:
-    std::array<bool, 512> keys{};
+    SDL_Scancode key;
+    bool enabled = true;
 };
 }  // namespace Kittens::Core
 #endif /* SYNTH_H_ */

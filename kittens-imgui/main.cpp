@@ -22,11 +22,47 @@
 #include "core/mixer.h"
 #include "imgui/imnodes.h"
 
+#include "chaiscript/chaiscript_console.h"
 #include "core/Status.h"
 #include "misc/globalstate.h"
 
 #define FRAMES_PER_SECOND 30
 #define FPS_INTERVAL 1.0
+
+static bool ImGui_ImplSDL2_Init() {
+    // Setup back-end capabilities flags
+    ImGuiIO& io = ImGui::GetIO();
+    io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;  // We can honor GetMouseCursor() values (optional)
+    io.BackendFlags |=
+        ImGuiBackendFlags_HasSetMousePos;  // We can honor io.WantSetMousePos requests (optional, rarely used)
+    io.BackendPlatformName = "imgui_impl_sdl";
+
+    // Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
+    io.KeyMap[ImGuiKey_Tab] = SDL_SCANCODE_TAB;
+    io.KeyMap[ImGuiKey_LeftArrow] = SDL_SCANCODE_LEFT;
+    io.KeyMap[ImGuiKey_RightArrow] = SDL_SCANCODE_RIGHT;
+    io.KeyMap[ImGuiKey_UpArrow] = SDL_SCANCODE_UP;
+    io.KeyMap[ImGuiKey_DownArrow] = SDL_SCANCODE_DOWN;
+    io.KeyMap[ImGuiKey_PageUp] = SDL_SCANCODE_PAGEUP;
+    io.KeyMap[ImGuiKey_PageDown] = SDL_SCANCODE_PAGEDOWN;
+    io.KeyMap[ImGuiKey_Home] = SDL_SCANCODE_HOME;
+    io.KeyMap[ImGuiKey_End] = SDL_SCANCODE_END;
+    io.KeyMap[ImGuiKey_Insert] = SDL_SCANCODE_INSERT;
+    io.KeyMap[ImGuiKey_Delete] = SDL_SCANCODE_DELETE;
+    io.KeyMap[ImGuiKey_Backspace] = SDL_SCANCODE_BACKSPACE;
+    io.KeyMap[ImGuiKey_Space] = SDL_SCANCODE_SPACE;
+    io.KeyMap[ImGuiKey_Enter] = SDL_SCANCODE_RETURN;
+    io.KeyMap[ImGuiKey_Escape] = SDL_SCANCODE_ESCAPE;
+    io.KeyMap[ImGuiKey_KeyPadEnter] = SDL_SCANCODE_KP_ENTER;
+    io.KeyMap[ImGuiKey_A] = SDL_SCANCODE_A;
+    io.KeyMap[ImGuiKey_C] = SDL_SCANCODE_C;
+    io.KeyMap[ImGuiKey_V] = SDL_SCANCODE_V;
+    io.KeyMap[ImGuiKey_X] = SDL_SCANCODE_X;
+    io.KeyMap[ImGuiKey_Y] = SDL_SCANCODE_Y;
+    io.KeyMap[ImGuiKey_Z] = SDL_SCANCODE_Z;
+
+    return true;
+}
 
 int main() {
     Kittens::Logging::initialize_logging("logfile.log");
@@ -54,6 +90,8 @@ int main() {
                          Kittens::GlobalSettings["window_height"].get_value<int>());
     imnodes::Initialize();
 
+    ImGui_ImplSDL2_Init();
+
     LOG(INFO) << "\t(texture)\n";
     SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, 100, 100);
     {
@@ -70,13 +108,17 @@ int main() {
 
     LOG(INFO) << "kittens " << Kittens::Info::KITTENS_VERSION << " started!\n";
 
-    Kittens::Core::Mixer mixer = Kittens::Core::Mixer(44100, 2);
-    mixer.synths = {new Kittens::Instrument::SynthWavSample("audio_files/Low E.wav"),
-                    new Kittens::Instrument::SynthWavSample("audio_files/Low E-but lower.wav")};
+    Kittens::GlobalState::mixer.synths = {
+        new Kittens::Instrument::SynthWavSample("audio_files/Low E.wav", SDL_SCANCODE_A),
+        new Kittens::Instrument::SynthWavSample("audio_files/Low E-but lower.wav", SDL_SCANCODE_S)};
 
-    mixer.start();
-    mixer.synths[0]->queue();
-    mixer.synths[1]->queue();
+    LOG(INFO)
+        << "calculated output latency: "
+        << std::chrono::duration_cast<std::chrono::milliseconds>(Kittens::GlobalState::mixer.output_latency()).count()
+        << "\n";
+    Kittens::GlobalState::mixer.start();
+    Kittens::GlobalState::mixer.synths[0]->queue();
+    Kittens::GlobalState::mixer.synths[1]->queue();
 
     bool run = true;
     long frames = 0;
@@ -106,6 +148,9 @@ int main() {
                     if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
                         io.DisplaySize.x = static_cast<float>(e.window.data1);
                         io.DisplaySize.y = static_cast<float>(e.window.data2);
+
+                        Kittens::GlobalSettings["window_width"].set_value(e.window.data1);
+                        Kittens::GlobalSettings["window_height"].set_value(e.window.data2);
                     }
                 }
                 case SDL_MOUSEWHEEL: {
@@ -145,20 +190,50 @@ int main() {
                         else
                             SDL_SetRelativeMouseMode(SDL_FALSE);
                     }
-                    int key = e.key.keysym.scancode;
+                    SDL_Scancode key = e.key.keysym.scancode;
                     IM_ASSERT(key >= 0 && key < IM_ARRAYSIZE(io.KeysDown));
                     io.KeysDown[key] = (e.type == SDL_KEYDOWN);
                     io.KeyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
                     io.KeyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
                     io.KeyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
                     io.KeySuper = ((SDL_GetModState() & KMOD_GUI) != 0);
+
+                    std::string scancode = SDL_GetScancodeName(e.key.keysym.scancode);
+
+                    std::map<SDL_Scancode, char> scancode_to_symbol = {
+                        {SDL_SCANCODE_1, '!'},           {SDL_SCANCODE_2, '@'},
+                        {SDL_SCANCODE_3, '#'},           {SDL_SCANCODE_4, '%'},
+                        {SDL_SCANCODE_5, '%'},           {SDL_SCANCODE_6, '^'},
+                        {SDL_SCANCODE_7, '&'},           {SDL_SCANCODE_8, '*'},
+                        {SDL_SCANCODE_9, '('},           {SDL_SCANCODE_0, ')'},
+                        {SDL_SCANCODE_MINUS, '_'},       {SDL_SCANCODE_APOSTROPHE, '"'},
+                        {SDL_SCANCODE_LEFTBRACKET, '{'}, {SDL_SCANCODE_RIGHTBRACKET, '}'}};
+
+                    if (scancode == "Space")
+                        scancode = " ";
+
+                    if (!io.KeyShift) {
+                        std::transform(scancode.begin(), scancode.end(), scancode.begin(),
+                                       [](unsigned char c) { return std::tolower(c); });
+                    } else {
+                        if (scancode_to_symbol.count(key) != 0) {
+                            scancode = scancode_to_symbol[key];
+                        }
+                    }
+
+                    if (e.type == SDL_KEYUP && scancode.length() == 1)
+                        io.AddInputCharacter(scancode[0]);
+
+                    if ((key == SDL_SCANCODE_C) && (e.type == SDL_KEYUP) && io.KeyShift && io.KeyAlt) {
+                        Kittens::GlobalState::mixer.synths.push_back(new Kittens::ChaiScript::ChaiScriptConsole());
+                    }
+
+                    if (io.KeyAlt && io.KeyCtrl && (e.type == SDL_KEYDOWN)) {
+                        if (Kittens::GlobalState::keybinds.count(key) != 0)
+                            Kittens::GlobalState::keybinds[key]();
+                    }
                 }
             }
-        }
-
-        if (io.KeysDown[SDL_SCANCODE_H]) {
-            mixer.synths.push_back(new Kittens::Instrument::SynthWavSample("audio_files/Low E.wav"));
-            mixer.synths.back()->queue();
         }
 
         int mouseX, mouseY;
@@ -214,13 +289,15 @@ int main() {
             SDL_RenderFillRect(renderer, &rect);
         };
 
-        ImGui::Begin("node editor");
-        imnodes::BeginNodeEditor();
+        // ImGui::Begin("node editor");
+        // imnodes::BeginNodeEditor();
 
-        mixer.Render();
+        // ImGui::ShowDemoWindow();
 
-        imnodes::EndNodeEditor();
-        ImGui::End();
+        Kittens::GlobalState::mixer.Render();
+
+        // imnodes::EndNodeEditor();
+        // ImGui::End();
 
         Kittens::Imgui::Status::RenderStatusBar();
 
@@ -234,7 +311,7 @@ int main() {
 
         SDL_RenderPresent(renderer);
     }
-    mixer.stop();
+    Kittens::GlobalState::mixer.stop();
 
     LOG(INFO) << "kittens " << Kittens::Info::KITTENS_VERSION << " shutting down... \n";
     ImGuiSDL::Deinitialize();

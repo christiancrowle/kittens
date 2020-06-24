@@ -22,8 +22,9 @@ void RenderStatusBar() {
     ImGui::Begin("statusbar", __null, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
     ImGui::Text("Kittens %s |", Kittens::Info::KITTENS_VERSION.c_str());
-    // ImGui::SameLine();
-    // ImGui::Text("Clock backup: %d", Kittens::Status::clock.get_pulses_since_last_ready());
+    ImGui::SameLine();
+    ImGui::Text("Clock tpp: %d, target %d", Kittens::Status::clock.milliseconds_between_events,
+                Kittens::GlobalSettings["quantize_amount"].get_value<int>());
 
     ImGui::End();
 

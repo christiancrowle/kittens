@@ -25,6 +25,9 @@ class Clock {
 
     std::vector<std::function<void()>> clock_queue;
 
+    int milliseconds_between_events = 0;
+    int ms;
+
    private:
     std::chrono::high_resolution_clock::time_point clock_last_tick;
     long long clock_pulses_since_last_ready;

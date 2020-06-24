@@ -1,6 +1,7 @@
 #include <regex>
 #include <vector>
 
+#include <SDL_keyboard.h>
 #include <imgui/imnodes.h>
 #include <time.h>
 #include <cstdlib>
@@ -27,16 +28,12 @@ std::string param_name(std::string name, int id) {
 }
 
 void Mixer::MakeNode(int id, std::string name, std::map<std::string, Core::Parameter>* params) {
-    imnodes::BeginNode(id);
-
-    imnodes::BeginNodeTitleBar();
-    ImGui::TextUnformatted(name.c_str());
-    imnodes::EndNodeTitleBar();
+    ImGui::Begin(name.c_str());
 
     int nextId = -1;
     for (auto& [name, value] : *params) {
         if (value.is_output()) {
-            imnodes::BeginOutputAttribute((nextId++));
+            // imnodes::BeginOutputAttribute((nextId++));
             ImGui::Text(param_name(name, id).c_str());
 
             if (value.get_type() == "float") {
@@ -51,9 +48,9 @@ void Mixer::MakeNode(int id, std::string name, std::map<std::string, Core::Param
                 ImGui::Checkbox(param_name(name, id).c_str(), value.get_value_ref<bool>());
             }
 
-            imnodes::EndOutputAttribute();
+            // imnodes::EndOutputAttribute();
         } else {
-            imnodes::BeginInputAttribute((nextId++));
+            // imnodes::BeginInputAttribute((nextId++));
             ImGui::Text(param_name(name, id).c_str());
 
             if (value.get_type() == "float") {
@@ -69,17 +66,19 @@ void Mixer::MakeNode(int id, std::string name, std::map<std::string, Core::Param
                 ImGui::Checkbox(param_name(name, id).c_str(), value.get_value_ref<bool>());
             }
 
-            imnodes::EndInputAttribute();
+            // imnodes::EndInputAttribute();
         }
     }
 
-    imnodes::EndNode();
+    // imnodes::EndNode();
 }
 
 void Mixer::MakeNodeFromSynth(Core::SynthBase* synth) {
     int id = (next_synth_id++);
 
     MakeNode(id, node_name(synth, id), &synth->params);
+    if (ImGui::Button("queue"))
+        synth->queue();
 }
 
 void Mixer::Render() {
@@ -88,6 +87,8 @@ void Mixer::Render() {
 
     for (auto synth : synths) {
         this->MakeNodeFromSynth(synth);
+        synth->render();
+        ImGui::End();
     }
 }
 
