@@ -13,7 +13,5 @@ void initialize_config(std::string config_name);
 void eval_buffer(std::string buf);
 
 void serialize_instruments(std::string out_file);
-
-extern std::string command_buf;
 }  // namespace Kittens::ChaiScript
 #endif  // CHAISCRIPT_GLUE_H

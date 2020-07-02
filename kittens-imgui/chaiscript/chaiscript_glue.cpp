@@ -13,8 +13,10 @@
 #include "chaiscript_glue.h"
 namespace Kittens::ChaiScript {
 
-std::string command_buf = "";
-
+chaiscript::ChaiScript* get_chai() {
+    static chaiscript::ChaiScript chai;
+    return &chai;
+}
 void update_setting_i(const std::string setting_name, int setting) {
     int i = 0;
     LOG(INFO) << "setting int " << setting_name << "(" << Kittens::Util::string_to_hex(setting_name) << ") to "
@@ -87,9 +89,8 @@ void save(std::string outfile) {
     serialize_instruments(outfile);
 }
 
-chaiscript::ChaiScript* get_chai() {
-    static chaiscript::ChaiScript chai;
-    return &chai;
+void load_file(std::string filename) {
+    get_chai()->eval_file(filename);
 }
 
 void initialize_config(std::string filename) {
@@ -105,6 +106,7 @@ void initialize_config(std::string filename) {
     get_chai()->add(chaiscript::fun(&enabled), "e");
     get_chai()->add(chaiscript::fun(&bind), "b");
     get_chai()->add(chaiscript::fun(&save), "sav");
+    get_chai()->add(chaiscript::fun(&load_file), "load");
 
     get_chai()->eval_file(filename);
 }
