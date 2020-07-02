@@ -1,7 +1,7 @@
 #include <string>
 #include "../core/SynthBase.h"
 
-#include <SDL_scancode.h>
+#include <SDL2/SDL_scancode.h>
 #include <q_io/audio_file.hpp>
 
 namespace q = cycfi::q;
@@ -18,6 +18,9 @@ class SynthWavSample : public Core::SynthBase {
     SynthWavSample(std::string filename);  // filename: the path to load
     SynthWavSample(std::string filename, SDL_Scancode key);
     float get_sample();  // return the next sample from the WAV
+
+    std::string serialize();
+
     std::string get_name();
 
     size_t get_sps();  // returns the samples per second of the WAV
@@ -42,6 +45,7 @@ class SynthWavSample : public Core::SynthBase {
     int channels;
     bool playing = false;
     bool queue_playing = false;
+    std::string filename;
 };
 }  // namespace Kittens::Instrument
 #endif  // SYNTHWAVSAMPLE_H

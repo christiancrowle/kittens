@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "SDL.h"
+#include "SDL2/SDL.h"
 //#undef main
 
 #include "aixlog.hpp"
@@ -8,6 +8,8 @@
 #include "imgui/imgui_sdl.h"
 
 #include "misc/kittensinfo.h"
+
+#include "portable-file-dialogs.h"
 
 //#include "duktape_glue.h"
 //#include "configfile.h"
@@ -226,6 +228,15 @@ int main() {
 
                     if ((key == SDL_SCANCODE_C) && (e.type == SDL_KEYUP) && io.KeyShift && io.KeyAlt) {
                         Kittens::GlobalState::mixer.synths.push_back(new Kittens::ChaiScript::ChaiScriptConsole());
+                    }
+
+                    if ((key == SDL_SCANCODE_S) && (e.type == SDL_KEYUP) && io.KeyCtrl && io.KeyShift) {
+                        auto f = pfd::save_file("save session...", "./");
+                        auto f_out = f.result();
+
+                        LOG(INFO) << "saving to: " << f_out << "\n";
+
+                        Kittens::ChaiScript::serialize_instruments(f_out);
                     }
 
                     if (io.KeyAlt && io.KeyCtrl && (e.type == SDL_KEYDOWN)) {

@@ -45,4 +45,8 @@ void ChaiScriptConsole::render() {
 
     // ImGui::End();
 }
+
+std::string ChaiScriptConsole::serialize() {
+    return "c();";
+}
 }  // namespace Kittens::ChaiScript

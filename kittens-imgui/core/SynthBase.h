@@ -5,7 +5,7 @@
  *      Author: devbat
  */
 
-#include <SDL_scancode.h>
+#include <SDL2/SDL_scancode.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -23,6 +23,7 @@ namespace Kittens::Core {
 class SynthBase : DeviceBase {
    public:
     virtual float get_sample() = 0;
+    virtual std::string serialize() = 0;
 
     SDL_Scancode get_key();
     void set_key(SDL_Scancode key);

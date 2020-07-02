@@ -26,7 +26,8 @@ set(IMGUI_HEADERS
         "extern/imgui/imgui_sdl.h"
         "extern/imgui/imnodes.h")
 
-find_package(SDL2 REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(SDL2 REQUIRED sdl2)
 include_directories(${SDL2_INCLUDE_DIRS})
 
 add_library(ImGui ${IMGUI_SOURCES} ${IMGUI_HEADERS})
@@ -69,5 +70,6 @@ target_link_libraries(kittens-imgui libqio
         ${PORTMIDI_LIBRARY}
         ${PORTAUDIO_LIBRARY}
         ImGui
+        RtMidi17
         ${SDL2_LIBRARIES}
         dl)

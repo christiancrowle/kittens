@@ -5,6 +5,7 @@
 
 #include <imgui/imgui.h>
 #include <algorithm>
+#include <sstream>
 #include <string>
 
 namespace Kittens::Instrument {
@@ -28,6 +29,8 @@ SynthWavSample::SynthWavSample(std::string filename) : SynthBase(), wav(q::wav_m
     this->params["volume"].set_type("float");
     this->params["volume"].set_value(0.5f);
     this->params["volume"].set_range(0, 1);
+
+    this->filename = filename;
 }
 
 SynthWavSample::SynthWavSample(std::string filename, SDL_Scancode key) : SynthWavSample(filename) {
@@ -114,4 +117,13 @@ size_t SynthWavSample::get_length() {
 }
 
 void SynthWavSample::render() {}
+
+std::string SynthWavSample::serialize() {
+    std::ostringstream serialization_string;
+    serialization_string << "s(";
+    serialization_string << std::to_string(this->key);
+    serialization_string << ", " << this->filename << ");";
+
+    return serialization_string.str();
+}
 }  // namespace Kittens::Instrument

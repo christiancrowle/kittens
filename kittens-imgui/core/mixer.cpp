@@ -1,7 +1,7 @@
 #include <regex>
 #include <vector>
 
-#include <SDL_keyboard.h>
+#include <SDL2/SDL_keyboard.h>
 #include <imgui/imnodes.h>
 #include <time.h>
 #include <cstdlib>

@@ -3,7 +3,7 @@
 //
 
 #include "SynthBase.h"
-#include <SDL_scancode.h>
+#include <SDL2/SDL_scancode.h>
 #include <algorithm>
 
 namespace Kittens::Core {

@@ -14,6 +14,8 @@ class ChaiScriptConsole : public Core::SynthBase {
     float get_sample();  // returns 0, because a console doesn't make sound
     std::string get_name();
 
+    std::string serialize();
+
     void queue();
 
     void render();

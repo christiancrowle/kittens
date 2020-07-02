@@ -5,7 +5,7 @@
 #include <array>
 #include <string>
 #include <variant>
-#include "SDL.h"
+#include "SDL2/SDL.h"
 
 #ifndef KITTENS_UTIL_H
 #define KITTENS_UTIL_H
@@ -16,6 +16,11 @@ std::string file_as_string(std::string filename);
 template <class V>
 std::type_info const& var_type(V const& v) {
     return std::visit([](auto&& x) -> decltype(auto) { return typeid(x); }, v);
+}
+
+template <typename Base, typename T>
+inline bool instanceof (const T*) {
+    return std::is_base_of<Base, T>::value;
 }
 
 std::string string_to_hex(const std::string& input);

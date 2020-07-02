@@ -58,7 +58,7 @@ enum MidiMessageType {
     SYSRT_CONTINUE = 0xFB,
     SYSRT_STOP = 0xFC,
     SYSRT_ACTIVE_SENSE = 0xFE,
-    SYSRT_RESET = 0xFF
+    SYSRT_RESET = 0xFF,
 
     // system common messages (random shit)
     SYSCOM_TIMING_CODE = 0xF1,    // 1 data byte
