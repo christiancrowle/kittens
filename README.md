@@ -1,10 +1,10 @@
 # Kittens
 
-** no, it doesn't do anything yet. the underlying architecture has been put in place **
-
 Software for live mixing and playback of software instruments.
 
-Compile with cmake like anything else.
+Compile with cmake like anything else. Deps on arch:
+
+`yay -S sdl2 zenity`
 
 ```
 $ cd ..
