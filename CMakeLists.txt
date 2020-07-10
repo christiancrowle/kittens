@@ -58,7 +58,8 @@ add_executable(kittens-imgui
         kittens-imgui/instrument/synth-wavsample.h
 
         kittens-imgui/misc/logging.cpp
-        kittens-imgui/misc/logging.h kittens-imgui/misc/util.cpp kittens-imgui/misc/util.h kittens-imgui/misc/globalstate.cpp kittens-imgui/misc/globalstate.h kittens-imgui/core/Status.cpp kittens-imgui/core/Status.h kittens-imgui/core/DeviceBase.cpp kittens-imgui/core/DeviceBase.h kittens-imgui/chaiscript/chaiscript_console.cpp kittens-imgui/chaiscript/chaiscript_console.h kittens-imgui/core/midicontrol.cpp kittens-imgui/core/midicontrol.h)
+
+        kittens-imgui/misc/logging.h kittens-imgui/misc/util.cpp kittens-imgui/misc/util.h kittens-imgui/misc/globalstate.cpp kittens-imgui/misc/globalstate.h kittens-imgui/core/Status.cpp kittens-imgui/core/Status.h kittens-imgui/core/DeviceBase.cpp kittens-imgui/core/DeviceBase.h kittens-imgui/chaiscript/chaiscript_console.cpp kittens-imgui/chaiscript/chaiscript_console.h kittens-imgui/core/midicontrol.cpp kittens-imgui/core/midicontrol.h kittens-imgui/chaiscript/chaiscript_multiline_console.cpp kittens-imgui/chaiscript/chaiscript_multiline_console.h)
 
 include_directories(extern/)
 include_directories(extern/RtMidi17)

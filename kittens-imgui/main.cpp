@@ -239,7 +239,16 @@ int main() {
                         Kittens::ChaiScript::serialize_instruments(f_out);
                     }
 
-                    if (io.KeyAlt && io.KeyCtrl && (e.type == SDL_KEYDOWN)) {
+                    if ((key == SDL_SCANCODE_O) && (e.type == SDL_KEYUP) && io.KeyCtrl && io.KeyShift) {
+                        auto f = pfd::open_file("save session...", "./");
+                        auto f_out = f.result()[0];
+
+                        LOG(INFO) << "loading from: " << f_out << "\n";
+
+                        Kittens::ChaiScript::eval_file(f_out);
+                    }
+
+                    if (io.KeyAlt && io.KeyCtrl && (key != 0)) {
                         if (Kittens::GlobalState::keybinds.count(key) != 0)
                             Kittens::GlobalState::keybinds[key]();
                     }

@@ -122,7 +122,7 @@ std::string SynthWavSample::serialize() {
     std::ostringstream serialization_string;
     serialization_string << "s(";
     serialization_string << std::to_string(this->key);
-    serialization_string << ", " << this->filename << ");";
+    serialization_string << ", \"" << this->filename << "\");";
 
     return serialization_string.str();
 }

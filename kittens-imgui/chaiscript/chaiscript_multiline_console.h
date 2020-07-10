@@ -2,17 +2,16 @@
 // Created by devbat on 6/24/20.
 //
 
-#ifndef KITTENS_CHAISCRIPT_CONSOLE_H
-#define KITTENS_CHAISCRIPT_CONSOLE_H
+#ifndef KITTENS_CHAISCRIPT_MULTILINE_CONSOLE_H
+#define KITTENS_CHAISCRIPT_MULTILINE_CONSOLE_H
 
 #include "../core/SynthBase.h"
 
 namespace Kittens::ChaiScript {
-extern int next_console_id;
-
-class ChaiScriptConsole : public Core::SynthBase {
+class ChaiScriptMultilineConsole : public Core::SynthBase {
    public:
-    ChaiScriptConsole();
+    ChaiScriptMultilineConsole();
+    ChaiScriptMultilineConsole(std::string contents);
     float get_sample();  // returns 0, because a console doesn't make sound
     std::string get_name();
 

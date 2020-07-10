@@ -11,6 +11,7 @@
 #include "../misc/util.h"
 #include "chaiscript_console.h"
 #include "chaiscript_glue.h"
+#include "chaiscript_multiline_console.h"
 namespace Kittens::ChaiScript {
 
 chaiscript::ChaiScript* get_chai() {
@@ -73,6 +74,15 @@ void add_console() {
     Kittens::GlobalState::mixer.synths.push_back(new Kittens::ChaiScript::ChaiScriptConsole());
 }
 
+void add_multiline_console() {
+    Kittens::GlobalState::mixer.synths.push_back(new Kittens::ChaiScript::ChaiScriptMultilineConsole());
+}
+
+void add_multiline_console_with_contents(std::string contents) {
+    LOG(INFO) << "test\n";
+    Kittens::GlobalState::mixer.synths.push_back(new Kittens::ChaiScript::ChaiScriptMultilineConsole(contents));
+}
+
 void queue(int id) {
     Kittens::GlobalState::mixer.synths[id]->queue();
 }
@@ -102,6 +112,8 @@ void initialize_config(std::string filename) {
     get_chai()->add(chaiscript::fun(&debug_add_synth), "debug_add_synth");
     get_chai()->add(chaiscript::fun(&add_sample), "s");
     get_chai()->add(chaiscript::fun(&add_console), "c");
+    get_chai()->add(chaiscript::fun(&add_multiline_console), "cml");
+    get_chai()->add(chaiscript::fun(&add_multiline_console_with_contents), "cmlc");
     get_chai()->add(chaiscript::fun(&queue), "q");
     get_chai()->add(chaiscript::fun(&enabled), "e");
     get_chai()->add(chaiscript::fun(&bind), "b");
@@ -114,8 +126,20 @@ void initialize_config(std::string filename) {
 void eval_buffer(std::string buf) {
     try {
         get_chai()->eval(buf);
-    } catch (std::exception e) {
+    } catch (std::exception& e) {
+        LOG(ERROR) << e.what() << "\n";
     }
+}
+
+void eval_file(std::string file) {
+    std::string buffer;
+
+    std::ifstream in_fstream(file);
+    in_fstream >> buffer;
+
+    in_fstream.close();
+
+    eval_buffer(buffer);
 }
 
 void serialize_instruments(std::string out_file) {

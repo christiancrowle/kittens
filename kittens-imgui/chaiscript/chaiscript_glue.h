@@ -11,6 +11,7 @@ namespace Kittens::ChaiScript {
 void initialize_config(std::string config_name);
 
 void eval_buffer(std::string buf);
+void eval_file(std::string file);
 
 void serialize_instruments(std::string out_file);
 }  // namespace Kittens::ChaiScript
