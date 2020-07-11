@@ -26,6 +26,7 @@
 
 #include "chaiscript/chaiscript_console.h"
 #include "core/Status.h"
+#include "core/input.h"
 #include "misc/globalstate.h"
 
 #define FRAMES_PER_SECOND 30
@@ -106,6 +107,19 @@ int main() {
     LOG(INFO) << "the clock too.\n";
     Kittens::Status::clock.start();
 
+    LOG(INFO) << "oh yeah, also input\n";
+    Kittens::Core::Input::InputHandler* inputHandler = nullptr;
+    if (Kittens::GlobalSettings["serial_enabled"].get_value<bool>()) {
+        inputHandler =
+            new Kittens::Core::Input::InputHandler(Kittens::GlobalSettings["serial_port_name"].get_value<std::string>(),
+                                                   Kittens::GlobalSettings["serial_port_baud"].get_value<int>());
+    } else {
+        try {
+            inputHandler = new Kittens::Core::Input::InputHandler;
+        } catch (std::exception e) {
+        }
+    }
+
     LOG(INFO) << "done!\n";
 
     LOG(INFO) << "kittens " << Kittens::Info::KITTENS_VERSION << " started!\n";
@@ -185,76 +199,13 @@ int main() {
                 }
                 case SDL_KEYDOWN:
                 case SDL_KEYUP: {
-                    if (e.key.keysym.sym == SDLK_LCTRL) {
-                        Kittens::GlobalState::IsParameterControlMode = (e.type == SDL_KEYDOWN);
-                        if (Kittens::GlobalState::IsParameterControlMode)
-                            SDL_SetRelativeMouseMode(SDL_TRUE);
-                        else
-                            SDL_SetRelativeMouseMode(SDL_FALSE);
-                    }
-                    SDL_Scancode key = e.key.keysym.scancode;
-                    IM_ASSERT(key >= 0 && key < IM_ARRAYSIZE(io.KeysDown));
-                    io.KeysDown[key] = (e.type == SDL_KEYDOWN);
-                    io.KeyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
-                    io.KeyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
-                    io.KeyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
-                    io.KeySuper = ((SDL_GetModState() & KMOD_GUI) != 0);
-
-                    std::string scancode = SDL_GetScancodeName(e.key.keysym.scancode);
-
-                    std::map<SDL_Scancode, char> scancode_to_symbol = {
-                        {SDL_SCANCODE_1, '!'},           {SDL_SCANCODE_2, '@'},
-                        {SDL_SCANCODE_3, '#'},           {SDL_SCANCODE_4, '%'},
-                        {SDL_SCANCODE_5, '%'},           {SDL_SCANCODE_6, '^'},
-                        {SDL_SCANCODE_7, '&'},           {SDL_SCANCODE_8, '*'},
-                        {SDL_SCANCODE_9, '('},           {SDL_SCANCODE_0, ')'},
-                        {SDL_SCANCODE_MINUS, '_'},       {SDL_SCANCODE_APOSTROPHE, '"'},
-                        {SDL_SCANCODE_LEFTBRACKET, '{'}, {SDL_SCANCODE_RIGHTBRACKET, '}'}};
-
-                    if (scancode == "Space")
-                        scancode = " ";
-
-                    if (!io.KeyShift) {
-                        std::transform(scancode.begin(), scancode.end(), scancode.begin(),
-                                       [](unsigned char c) { return std::tolower(c); });
-                    } else {
-                        if (scancode_to_symbol.count(key) != 0) {
-                            scancode = scancode_to_symbol[key];
-                        }
-                    }
-
-                    if (e.type == SDL_KEYUP && scancode.length() == 1)
-                        io.AddInputCharacter(scancode[0]);
-
-                    if ((key == SDL_SCANCODE_C) && (e.type == SDL_KEYUP) && io.KeyShift && io.KeyAlt) {
-                        Kittens::GlobalState::mixer.synths.push_back(new Kittens::ChaiScript::ChaiScriptConsole());
-                    }
-
-                    if ((key == SDL_SCANCODE_S) && (e.type == SDL_KEYUP) && io.KeyCtrl && io.KeyShift) {
-                        auto f = pfd::save_file("save session...", "./");
-                        auto f_out = f.result();
-
-                        LOG(INFO) << "saving to: " << f_out << "\n";
-
-                        Kittens::ChaiScript::serialize_instruments(f_out);
-                    }
-
-                    if ((key == SDL_SCANCODE_O) && (e.type == SDL_KEYUP) && io.KeyCtrl && io.KeyShift) {
-                        auto f = pfd::open_file("save session...", "./");
-                        auto f_out = f.result()[0];
-
-                        LOG(INFO) << "loading from: " << f_out << "\n";
-
-                        Kittens::ChaiScript::eval_file(f_out);
-                    }
-
-                    if (io.KeyAlt && io.KeyCtrl && (key != 0)) {
-                        if (Kittens::GlobalState::keybinds.count(key) != 0)
-                            Kittens::GlobalState::keybinds[key]();
-                    }
+                    inputHandler->HandleKeyboard(e, io);
                 }
             }
         }
+
+        if (Kittens::GlobalSettings["serial_enabled"].get_value<bool>())
+            inputHandler->HandleSerial();
 
         int mouseX, mouseY;
         const int buttons = SDL_GetMouseState(&mouseX, &mouseY);

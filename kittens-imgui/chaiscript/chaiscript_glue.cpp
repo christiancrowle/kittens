@@ -5,6 +5,7 @@
 #include "aixlog.hpp"
 #include "chaiscript/chaiscript.hpp"
 
+#include "../core/input.h"
 #include "../instrument/synth-wavsample.h"
 #include "../misc/globalstate.h"
 #include "../misc/settings.h"
@@ -95,6 +96,10 @@ void bind(int key, const std::string func) {
     Kittens::GlobalState::keybinds[key] = [=] { Kittens::ChaiScript::eval_buffer(func); };
 }
 
+void bind_serial(int bit, const std::string func) {
+    Kittens::Core::Input::SerialBindings[bit].push_back([=] { Kittens::ChaiScript::eval_buffer(func); });
+}
+
 void save(std::string outfile) {
     serialize_instruments(outfile);
 }
@@ -117,6 +122,7 @@ void initialize_config(std::string filename) {
     get_chai()->add(chaiscript::fun(&queue), "q");
     get_chai()->add(chaiscript::fun(&enabled), "e");
     get_chai()->add(chaiscript::fun(&bind), "b");
+    get_chai()->add(chaiscript::fun(&bind_serial), "bs");
     get_chai()->add(chaiscript::fun(&save), "sav");
     get_chai()->add(chaiscript::fun(&load_file), "load");
 

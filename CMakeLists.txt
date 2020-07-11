@@ -24,9 +24,10 @@ set(IMGUI_HEADERS
         "extern/imgui/imstb_textedit.h"
         "extern/imgui/imstb_truetype.h"
         "extern/imgui/imgui_sdl.h"
-        "extern/imgui/imnodes.h")
+        "extern/imgui/imnodes.h" extern/SimpleSerial.h)
 
 find_package(PkgConfig REQUIRED)
+find_package(Boost REQUIRED system)
 pkg_check_modules(SDL2 REQUIRED sdl2)
 include_directories(${SDL2_INCLUDE_DIRS})
 
@@ -46,6 +47,8 @@ add_executable(kittens-imgui
         extern/duktape/duktape.h
         extern/duktape/duk_config.h
 
+        extern/AsyncSerial.cpp
+
         kittens-imgui/main.cpp
 
         kittens-imgui/misc/settings.cpp
@@ -59,10 +62,11 @@ add_executable(kittens-imgui
 
         kittens-imgui/misc/logging.cpp
 
-        kittens-imgui/misc/logging.h kittens-imgui/misc/util.cpp kittens-imgui/misc/util.h kittens-imgui/misc/globalstate.cpp kittens-imgui/misc/globalstate.h kittens-imgui/core/Status.cpp kittens-imgui/core/Status.h kittens-imgui/core/DeviceBase.cpp kittens-imgui/core/DeviceBase.h kittens-imgui/chaiscript/chaiscript_console.cpp kittens-imgui/chaiscript/chaiscript_console.h kittens-imgui/core/midicontrol.cpp kittens-imgui/core/midicontrol.h kittens-imgui/chaiscript/chaiscript_multiline_console.cpp kittens-imgui/chaiscript/chaiscript_multiline_console.h)
+        kittens-imgui/misc/logging.h kittens-imgui/misc/util.cpp kittens-imgui/misc/util.h kittens-imgui/misc/globalstate.cpp kittens-imgui/misc/globalstate.h kittens-imgui/core/Status.cpp kittens-imgui/core/Status.h kittens-imgui/core/DeviceBase.cpp kittens-imgui/core/DeviceBase.h kittens-imgui/chaiscript/chaiscript_console.cpp kittens-imgui/chaiscript/chaiscript_console.h kittens-imgui/core/midicontrol.cpp kittens-imgui/core/midicontrol.h kittens-imgui/chaiscript/chaiscript_multiline_console.cpp kittens-imgui/chaiscript/chaiscript_multiline_console.h kittens-imgui/core/input.cpp kittens-imgui/core/input.h)
 
 include_directories(extern/)
 include_directories(extern/RtMidi17)
+include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories(libKittens/)
 
@@ -72,5 +76,6 @@ target_link_libraries(kittens-imgui libqio
         ${PORTAUDIO_LIBRARY}
         ImGui
         RtMidi17
+        ${Boost_LIBRARIES}
         ${SDL2_LIBRARIES}
         dl)
