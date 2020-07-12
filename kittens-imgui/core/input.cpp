@@ -49,6 +49,8 @@ InputHandler::InputHandler() : serial("", 0) {
 }
 
 void InputHandler::HandleKeyboard(SDL_Event e, ImGuiIO& io) {
+    SDL_Scancode key = e.key.keysym.scancode;
+
     ///
     /// set up imgui io
     ///
@@ -69,7 +71,6 @@ void InputHandler::HandleKeyboard(SDL_Event e, ImGuiIO& io) {
         else
             SDL_SetRelativeMouseMode(SDL_FALSE);
     }
-    SDL_Scancode key = e.key.keysym.scancode;
 
     ///
     /// imgui input character handling -- TODO: please improve
