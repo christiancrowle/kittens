@@ -4,7 +4,9 @@ Software for live mixing and playback of software instruments.
 
 Compile with cmake like anything else. Deps on arch:
 
-`yay -S sdl2 zenity`
+`yay -S sdl2 zenity boost`
+
+on debian it needs libboost-system-dev for whatever reason. i don't make the rules.
 
 ```
 $ cd ..
