@@ -10,11 +10,11 @@
 #include "../chaiscript/chaiscript_glue.h"
 #include "../misc/globalstate.h"
 
-#include <cereal/archives/binary.hpp>
-
 namespace Kittens::Core::Input {
 
-std::map<int, std::vector<std::function<void()>>> SerialBindings = {};
+std::string SerialBuffer;
+std::map<int, std::vector<std::string>> SerialBindings = {};
+std::map<int, std::vector<std::string>> keybinds = {};
 std::vector<char> last_data = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 std::vector<char> data_vec;
 
@@ -23,10 +23,12 @@ void process_data_vec() {
         if (data_vec[i] != last_data[i]) {
             // LOG(INFO) << data_vec[i];
             for (auto bind : SerialBindings[i])
-                bind();
+                Kittens::ChaiScript::eval_buffer(bind);
         }
     }
     // LOG(INFO) << "\n";
+
+    SerialBuffer = std::string(data_vec.begin(), data_vec.end());
 
     last_data = data_vec;
     data_vec.clear();
@@ -136,8 +138,9 @@ void InputHandler::HandleKeyboard(SDL_Event e, ImGuiIO& io) {
     /// binds for b() script command
     ///
     if (io.KeyAlt && io.KeyCtrl && (key != 0)) {
-        if (Kittens::GlobalState::keybinds.count(key) != 0)
-            Kittens::GlobalState::keybinds[key]();
+        if (keybinds.count(key) != 0)
+            for (auto keybind : keybinds[key])
+                Kittens::ChaiScript::eval_buffer(keybind);
     }
 }
 

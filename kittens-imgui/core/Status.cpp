@@ -6,6 +6,7 @@
 #include "../misc/kittensinfo.h"
 #include "../misc/settings.h"
 #include "imgui/imgui.h"
+#include "input.h"
 
 namespace Kittens::Status {
 Kittens::Core::Clock clock;
@@ -25,6 +26,8 @@ void RenderStatusBar() {
     ImGui::SameLine();
     ImGui::Text("Clock tpp: %d, target %d", Kittens::Status::clock.milliseconds_between_events,
                 Kittens::GlobalSettings["quantize_amount"].get_value<int>());
+    ImGui::SameLine();
+    ImGui::Text("serial: %s", Kittens::Core::Input::SerialBuffer.c_str());
 
     ImGui::End();
 

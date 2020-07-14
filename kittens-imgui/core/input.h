@@ -11,7 +11,9 @@
 #include "../misc/settings.h"
 
 namespace Kittens::Core::Input {
-extern std::map<int, std::vector<std::function<void()>>> SerialBindings;
+extern std::map<int, std::vector<std::string>> SerialBindings;
+extern std::map<int, std::vector<std::string>> keybinds;
+extern std::string SerialBuffer;
 
 class InputHandler {
    private:

@@ -66,9 +66,11 @@ void debug_add_synth() {
 }
 
 void add_sample(int key, std::string filename) {
-    Kittens::GlobalState::mixer.synths.push_back(
+    // int newSize = Kittens::GlobalState::mixer.synths.size() + 1;
+    // Kittens::GlobalState::mixer.synths.resize(newSize);
+    Kittens::GlobalState::mixer.synths.emplace_back(
         new Kittens::Instrument::SynthWavSample(filename, static_cast<SDL_Scancode>(key)));
-    Kittens::GlobalState::mixer.synths.back()->queue();
+    // Kittens::GlobalState::mixer.synths.back()->queue();
 }
 
 void add_console() {
@@ -93,11 +95,11 @@ void enabled(int id) {
 }
 
 void bind(int key, const std::string func) {
-    Kittens::GlobalState::keybinds[key] = [=] { Kittens::ChaiScript::eval_buffer(func); };
+    Kittens::Core::Input::keybinds[key].push_back(func);
 }
 
 void bind_serial(int bit, const std::string func) {
-    Kittens::Core::Input::SerialBindings[bit].push_back([=] { Kittens::ChaiScript::eval_buffer(func); });
+    Kittens::Core::Input::SerialBindings[bit].push_back(func);
 }
 
 void save(std::string outfile) {
@@ -106,6 +108,10 @@ void save(std::string outfile) {
 
 void load_file(std::string filename) {
     get_chai()->eval_file(filename);
+}
+
+void clear_mixer() {
+    Kittens::GlobalState::mixer.Clear();
 }
 
 void initialize_config(std::string filename) {
@@ -125,6 +131,7 @@ void initialize_config(std::string filename) {
     get_chai()->add(chaiscript::fun(&bind_serial), "bs");
     get_chai()->add(chaiscript::fun(&save), "sav");
     get_chai()->add(chaiscript::fun(&load_file), "load");
+    get_chai()->add(chaiscript::fun(&clear_mixer), "clr");
 
     get_chai()->eval_file(filename);
 }
@@ -138,20 +145,35 @@ void eval_buffer(std::string buf) {
 }
 
 void eval_file(std::string file) {
-    std::string buffer;
-
     std::ifstream in_fstream(file);
-    in_fstream >> buffer;
+    std::string buffer((std::istreambuf_iterator<char>(in_fstream)), std::istreambuf_iterator<char>());
 
     in_fstream.close();
+
+    // LOG(INFO) << buffer << "\n";
 
     eval_buffer(buffer);
 }
 
 void serialize_instruments(std::string out_file) {
     std::ostringstream serialization_strings;
+
+    serialization_strings << "clr();\n";
+
     for (auto synth : Kittens::GlobalState::mixer.synths) {
         serialization_strings << synth->serialize() << "\n";
+    }
+
+    for (auto [key, keybind] : Kittens::Core::Input::keybinds) {
+        for (auto bind : keybind) {
+            serialization_strings << "b(" << key << ", \"" << bind << "\");\n";
+        }
+    }
+
+    for (auto [idx, serialbind] : Kittens::Core::Input::SerialBindings) {
+        for (auto bind : serialbind) {
+            serialization_strings << "bs(" << idx << ", \"" << bind << "\");\n";
+        }
     }
 
     std::ofstream out_fstream(out_file);

@@ -128,13 +128,13 @@ int main() {
         new Kittens::Instrument::SynthWavSample("audio_files/Low E.wav", SDL_SCANCODE_A),
         new Kittens::Instrument::SynthWavSample("audio_files/Low E-but lower.wav", SDL_SCANCODE_S)};
 
+    // Kittens::GlobalState::mixer.Clear();
+
     LOG(INFO)
         << "calculated output latency: "
         << std::chrono::duration_cast<std::chrono::milliseconds>(Kittens::GlobalState::mixer.output_latency()).count()
         << "\n";
     Kittens::GlobalState::mixer.start();
-    Kittens::GlobalState::mixer.synths[0]->queue();
-    Kittens::GlobalState::mixer.synths[1]->queue();
 
     bool run = true;
     long frames = 0;

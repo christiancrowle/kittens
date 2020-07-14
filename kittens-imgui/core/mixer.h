@@ -26,6 +26,8 @@ struct Mixer : q::port_audio_stream {
     void process(out_channels const& out);
     void Render();
 
+    void Clear();
+
    private:
     int next_id;
     int next_synth_id;

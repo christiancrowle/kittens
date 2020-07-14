@@ -92,6 +92,14 @@ void Mixer::Render() {
     }
 }
 
+void Mixer::Clear() {
+    for (auto s : this->synths) {
+        delete s;
+    }
+
+    this->synths.clear();
+}
+
 void Mixer::process(out_channels const& out) {
     auto left = out[0];
     auto right = out[1];
