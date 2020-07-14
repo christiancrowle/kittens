@@ -10,6 +10,8 @@
 #include "../chaiscript/chaiscript_glue.h"
 #include "../misc/globalstate.h"
 
+#include <cereal/archives/binary.hpp>
+
 namespace Kittens::Core::Input {
 
 std::map<int, std::vector<std::function<void()>>> SerialBindings = {};
@@ -44,7 +46,7 @@ InputHandler::InputHandler(std::string serial_port, int baud) : serial(serial_po
     serial.setCallback(received);
 }
 
-InputHandler::InputHandler() : serial("", 0) {
+InputHandler::InputHandler() : serial("/dev/bigppnrg", 69420) {  // heh, look, placeholders; i'm sure it's fine
     LOG(WARNING) << "serial port disabled\n";
 }
 
