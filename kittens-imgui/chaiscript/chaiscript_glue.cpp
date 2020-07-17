@@ -94,6 +94,16 @@ void enabled(int id) {
     Kittens::GlobalState::mixer.synths[id]->set_enabled(!Kittens::GlobalState::mixer.synths[id]->get_enabled());
 }
 
+void pauseall() {
+    for (auto& synth : Kittens::GlobalState::mixer.synths)
+        synth->set_enabled(!synth->get_enabled());
+}
+
+void queueall() {
+    for (auto& synth : Kittens::GlobalState::mixer.synths)
+        synth->queue();
+}
+
 void bind(int key, const std::string func) {
     Kittens::Core::Input::keybinds[key].push_back(func);
 }
@@ -126,7 +136,9 @@ void initialize_config(std::string filename) {
     get_chai()->add(chaiscript::fun(&add_multiline_console), "cml");
     get_chai()->add(chaiscript::fun(&add_multiline_console_with_contents), "cmlc");
     get_chai()->add(chaiscript::fun(&queue), "q");
-    get_chai()->add(chaiscript::fun(&enabled), "e");
+    get_chai()->add(chaiscript::fun(&pauseall), "pause");
+    get_chai()->add(chaiscript::fun(&queueall), "queue");
+    get_chai()->add(chaiscript::fun(&enabled), "p");
     get_chai()->add(chaiscript::fun(&bind), "b");
     get_chai()->add(chaiscript::fun(&bind_serial), "bs");
     get_chai()->add(chaiscript::fun(&save), "sav");

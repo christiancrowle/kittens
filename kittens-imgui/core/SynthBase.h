@@ -36,6 +36,7 @@ class SynthBase : DeviceBase {
     using DeviceBase::get_name;
     using DeviceBase::params;
     using DeviceBase::queue;
+    using DeviceBase::stop;
 
    protected:
     SDL_Scancode key;

@@ -16,6 +16,7 @@ class DeviceBase {
     std::map<std::string, Parameter> params;
 
     virtual void queue() = 0;
+    virtual void stop() = 0;
 
    protected:
     std::string name;

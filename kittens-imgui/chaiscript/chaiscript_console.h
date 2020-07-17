@@ -19,6 +19,7 @@ class ChaiScriptConsole : public Core::SynthBase {
     std::string serialize();
 
     void queue();
+    void stop();
 
     void render();
 

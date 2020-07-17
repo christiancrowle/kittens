@@ -35,6 +35,8 @@ void ChaiScriptMultilineConsole::queue() {
     Kittens::ChaiScript::eval_buffer(command_buf);
 }
 
+void ChaiScriptMultilineConsole::stop() {}
+
 void ChaiScriptMultilineConsole::set_id(int id) {
     this->id = id;
 }
